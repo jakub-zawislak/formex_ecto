@@ -75,7 +75,7 @@ defmodule Formex.Ecto.Controller do
   """
 
   @doc """
-  Works same as `Formex.Controller.handle_form`, but also invokes `Ecto.Repo.insert/2`
+  Works same as `Formex.Controller.handle_form/2`, but also invokes `Ecto.Repo.insert/2`
   """
   @spec insert_form_data(Form.t) :: {:ok, Ecto.Schema.t} | {:error, Form.t}
   def insert_form_data(form) do
@@ -96,7 +96,7 @@ defmodule Formex.Ecto.Controller do
   end
 
   @doc """
-  Works same as `Formex.Controller.handle_form`, but also invokes `Ecto.Repo.update/2`
+  Works same as `Formex.Controller.handle_form/2`, but also invokes `Ecto.Repo.update/2`
   """
   @spec update_form_data(Form.t) :: {:ok, Ecto.Schema.t} | {:error, Form.t}
   def update_form_data(form) do
