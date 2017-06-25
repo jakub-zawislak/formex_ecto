@@ -103,7 +103,7 @@ defmodule Formex.Ecto.CustomField.SelectAssoc do
     opts    = parse_opts(module, opts)
     choices = get_choices(module, opts)
 
-    Field.create_field(form, :select, name_id, choices: choices)
+    Field.create_field(:select, name_id, choices: choices)
   end
 
   defp create_field_multiple(form, name, opts) do
@@ -120,7 +120,7 @@ defmodule Formex.Ecto.CustomField.SelectAssoc do
       []
     end
 
-    Field.create_field(form, :multiple_select, name, choices: choices, phoenix_opts: [
+    Field.create_field(:multiple_select, name, choices: choices, phoenix_opts: [
       selected: selected
     ])
   end
