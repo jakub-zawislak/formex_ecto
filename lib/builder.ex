@@ -33,7 +33,7 @@ defimpl Formex.BuilderProtocol, for: Formex.BuilderType.Ecto do
     struct_info = struct
     |> Map.from_struct
     |> Enum.filter(&(elem(&1, 0) !== :__meta__))
-    |> Enum.map(fn {k, v} ->
+    |> Enum.map(fn {k, _v} ->
       v = case get_assoc_or_embed(form, k) do
         %{cardinality: :many, related: module} ->
           {:collection, module}

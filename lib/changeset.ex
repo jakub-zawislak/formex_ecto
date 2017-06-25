@@ -68,14 +68,14 @@ defmodule Formex.Ecto.Changeset do
       end
 
       case item do
-        %Formex.FormNested{} ->
+        %FormNested{} ->
           changeset
           |> cast_func.(item.name, with: fn _substruct, _params ->
             subform = item.form
             create_changeset(subform)
           end)
 
-        %Formex.FormCollection{} ->
+        %FormCollection{} ->
           changeset
           |> cast_func.(item.name, with: fn substruct, params ->
 
