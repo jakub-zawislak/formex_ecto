@@ -1,0 +1,268 @@
+    <!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="generator" content="ExDoc v0.16.1">
+    <title>Formex.Ecto.Controller – formex_ecto v0.1.0</title>
+    <link rel="stylesheet" href="dist/app-4ecae1abb8.css" />
+    
+      <link rel="canonical" href="https://hexdocs.pm/formex_ecto/Formex.Ecto.Controller.html" />
+    
+    <script src="dist/sidebar_items-e6049f0c6e.js"></script>
+  </head>
+  <body data-type="modules">
+    <script>try { if(localStorage.getItem('night-mode')) document.body.className += ' night-mode'; } catch (e) { }</script>
+
+    <div class="main">
+<button class="sidebar-toggle">
+  <span class="icon-menu" aria-hidden="true"></span>
+  <span class="sr-only">Toggle Sidebar</span>
+</button>
+<section class="sidebar">
+
+  
+  <a href="readme.html" class="sidebar-projectLink">
+    <div class="sidebar-projectDetails">
+      <h1 class="sidebar-projectName">
+        formex_ecto
+      </h1>
+      <h2 class="sidebar-projectVersion">
+        v0.1.0
+      </h2>
+    </div>
+    
+  </a>
+
+  <div class="sidebar-search">
+    <span class="icon-search" aria-hidden="true"></span>
+    <input type="text" class="sidebar-searchInput" placeholder="search" aria-label="Search" autocomplete="off" />
+  </div>
+
+  <ul class="sidebar-listNav">
+    <li><a id="extras-list" href="#full-list">Pages</a></li>
+
+    
+      <li><a id="modules-list" href="#full-list">Modules</a></li>
+    
+
+    
+
+    
+
+    
+  </ul>
+  <div class="gradient"></div>
+  <ul id="full-list" class="sidebar-fullList"></ul>
+</section>
+
+<section class="content">
+  <div class="content-outer">
+    <div id="content" class="content-inner">
+
+
+      <h1>
+        <small class="visible-xs">formex_ecto v0.1.0</small>
+        Formex.Ecto.Controller
+        
+          <a href="https://github.com/jakub-zawislak/formex_ecto/blob/master/lib/controller.ex#L1" title="View Source" class="view-source" rel="help">
+            <span class="icon-code" aria-hidden="true"></span>
+            <span class="sr-only">View Source</span>
+          </a>
+        
+      </h1>
+
+      
+        <section id="moduledoc">
+          <p>Ecto helpers for controller.</p>
+<h1>Installation:</h1>
+<p><code class="inline">web/web.ex</code></p>
+<pre><code class="elixir">def controller do
+  quote do
+    use Formex.Ecto.Controller
+  end
+end</code></pre>
+<h1>Usage</h1>
+<h2 id="module-crud" class="section-heading">
+  <a href="#module-crud" class="hover-link"><span class="icon-link" aria-hidden="true"></span></a>
+  CRUD
+</h2>
+
+<pre><code class="elixir">def new(conn, _params) do
+  form = create_form(App.ArticleType, %Article{})
+  render(conn, &quot;new.html&quot;, form: form)
+end</code></pre>
+<pre><code class="elixir">def create(conn, %{&quot;article&quot; =&gt; article_params}) do
+  App.ArticleType
+  |&gt; create_form(%Article{}, article_params)
+  |&gt; insert_form_data
+  |&gt; case do
+    {:ok, _article} -&gt;
+      # ...
+    {:error, form} -&gt;
+      # ...
+  end
+end</code></pre>
+<pre><code class="elixir">def edit(conn, %{&quot;id&quot; =&gt; id}) do
+  article = Repo.get!(Article, id)
+  form = create_form(App.ArticleType, article)
+  render(conn, &quot;edit.html&quot;, article: article, form: form)
+end</code></pre>
+<pre><code class="elixir">def update(conn, %{&quot;id&quot; =&gt; id, &quot;article&quot; =&gt; article_params}) do
+  article = Repo.get!(Article, id)
+
+  App.ArticleType
+  |&gt; create_form(article, article_params)
+  |&gt; update_form_data
+  |&gt; case do
+    {:ok, article} -&gt;
+      # ...
+    {:error, form} -&gt;
+      # ...
+  end
+end</code></pre>
+
+        </section>
+      
+
+      
+        <section id="summary" class="details-list">
+          <h1 class="section-heading">
+            <a class="hover-link" href="#summary">
+              <span class="icon-link" aria-hidden="true"></span>
+              <span class="sr-only">Link to this section</span>
+            </a>
+            Summary
+          </h1>
+          
+
+          
+  <div class="summary-functions summary">
+    <h2>
+      <a href="#functions">Functions</a>
+    </h2>
+    <div class="summary-row">
+  <div class="summary-signature">
+    <a href="#insert_form_data/1">insert_form_data(form)</a>
+  </div>
+  
+    <div class="summary-synopsis"><p>Works same as <a href="https://hexdocs.pm/formex/0.5.0/Formex.Controller.html#handle_form/2"><code class="inline">Formex.Controller.handle_form/2</code></a>, but also invokes <a href="https://hexdocs.pm/ecto/2.1.4/Ecto.Repo.html#insert/2"><code class="inline">Ecto.Repo.insert/2</code></a></p>
+</div>
+  
+</div>
+<div class="summary-row">
+  <div class="summary-signature">
+    <a href="#update_form_data/1">update_form_data(form)</a>
+  </div>
+  
+    <div class="summary-synopsis"><p>Works same as <a href="https://hexdocs.pm/formex/0.5.0/Formex.Controller.html#handle_form/2"><code class="inline">Formex.Controller.handle_form/2</code></a>, but also invokes <a href="https://hexdocs.pm/ecto/2.1.4/Ecto.Repo.html#update/2"><code class="inline">Ecto.Repo.update/2</code></a></p>
+</div>
+  
+</div>
+
+  </div>
+
+
+          
+
+        </section>
+      
+
+      
+
+      
+        <section id="functions" class="details-list">
+          <h1 class="section-heading">
+            <a class="hover-link" href="#functions">
+              <span class="icon-link" aria-hidden="true"></span>
+              <span class="sr-only">Link to this section</span>
+            </a>
+            Functions
+          </h1>
+          <div class="detail" id="insert_form_data/1">
+  
+  <div class="detail-header">
+    <a href="#insert_form_data/1" class="detail-link" title="Link to this function">
+      <span class="icon-link" aria-hidden="true"></span>
+      <span class="sr-only">Link to this function</span>
+    </a>
+    <span class="signature">insert_form_data(form)</span>
+    
+      <a href="https://github.com/jakub-zawislak/formex_ecto/blob/master/lib/controller.ex#L81" class="view-source" rel="help" title="View Source">
+       <span class="icon-code" aria-hidden="true"></span>
+       <span class="sr-only">View Source</span>
+     </a>
+    
+    
+    
+      <div class="specs">
+        
+          <pre>insert_form_data(<a href="https://hexdocs.pm/formex/0.5.0/Formex.Form.html#t:t/0">Formex.Form.t</a>) ::
+  {:ok, <a href="https://hexdocs.pm/ecto/2.1.4/Ecto.Schema.html#t:t/0">Ecto.Schema.t</a>} |
+  {:error, <a href="https://hexdocs.pm/formex/0.5.0/Formex.Form.html#t:t/0">Formex.Form.t</a>}</pre>
+        
+      </div>
+    
+  </div>
+  <section class="docstring">
+    <p>Works same as <a href="https://hexdocs.pm/formex/0.5.0/Formex.Controller.html#handle_form/2"><code class="inline">Formex.Controller.handle_form/2</code></a>, but also invokes <a href="https://hexdocs.pm/ecto/2.1.4/Ecto.Repo.html#insert/2"><code class="inline">Ecto.Repo.insert/2</code></a></p>
+
+  </section>
+</div>
+<div class="detail" id="update_form_data/1">
+  
+  <div class="detail-header">
+    <a href="#update_form_data/1" class="detail-link" title="Link to this function">
+      <span class="icon-link" aria-hidden="true"></span>
+      <span class="sr-only">Link to this function</span>
+    </a>
+    <span class="signature">update_form_data(form)</span>
+    
+      <a href="https://github.com/jakub-zawislak/formex_ecto/blob/master/lib/controller.ex#L102" class="view-source" rel="help" title="View Source">
+       <span class="icon-code" aria-hidden="true"></span>
+       <span class="sr-only">View Source</span>
+     </a>
+    
+    
+    
+      <div class="specs">
+        
+          <pre>update_form_data(<a href="https://hexdocs.pm/formex/0.5.0/Formex.Form.html#t:t/0">Formex.Form.t</a>) ::
+  {:ok, <a href="https://hexdocs.pm/ecto/2.1.4/Ecto.Schema.html#t:t/0">Ecto.Schema.t</a>} |
+  {:error, <a href="https://hexdocs.pm/formex/0.5.0/Formex.Form.html#t:t/0">Formex.Form.t</a>}</pre>
+        
+      </div>
+    
+  </div>
+  <section class="docstring">
+    <p>Works same as <a href="https://hexdocs.pm/formex/0.5.0/Formex.Controller.html#handle_form/2"><code class="inline">Formex.Controller.handle_form/2</code></a>, but also invokes <a href="https://hexdocs.pm/ecto/2.1.4/Ecto.Repo.html#update/2"><code class="inline">Ecto.Repo.update/2</code></a></p>
+
+  </section>
+</div>
+
+        </section>
+      
+
+      
+          <footer class="footer">
+        <p>
+          <span class="line">
+            Built using
+            <a href="https://github.com/elixir-lang/ex_doc" title="ExDoc" rel="help" target="_blank">ExDoc</a> (v0.16.1),
+          </span>
+          <span class="line">
+            designed by
+            <a href="https://twitter.com/dignifiedquire" target="_blank" title="@dignifiedquire">Friedel Ziegelmayer</a>.
+            </span>
+        </p>
+        <button class="night-mode-toggle"><span class="sr-only">Switch theme</span></button>
+      </footer>
+    </div>
+  </div>
+</section>
+</div>
+  <script src="dist/app-126b5f0e90.js"></script>
+  </body>
+</html>
+

@@ -16,7 +16,7 @@ defmodule Formex.Ecto.CustomField.SelectAssoc do
   ```
   ```
   form
-  |> add(:category_id, Formex.CustomField.SelectAssoc, label: "Category")
+  |> add(:category_id, Formex.Ecto.CustomField.SelectAssoc, label: "Category")
   ```
   Formex will find out that `:category_id` refers to App.Category schema and download all rows
   from Repo ordered by name.

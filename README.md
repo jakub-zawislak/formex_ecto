@@ -21,6 +21,12 @@ config :formex,
 
 `web/web.ex`
 ```elixir
+def model do
+  quote do
+    use Formex.Ecto.Schema
+  end
+end
+
 def controller do
   quote do
     use Formex.Ecto.Controller
