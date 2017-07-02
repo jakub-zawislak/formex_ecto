@@ -17,7 +17,9 @@ defmodule Formex.Ecto.ChangesetValidator do
 
   # Limitations
 
-  This validator can be used only with Ecto schemas.
+  * can be used only with Ecto schemas.
+  * `length` validation for collections doesn't work.
+    Maybe there is a way to fix it. If really need this now - use Vex validator instead.
 
   # Installation
 
@@ -95,6 +97,9 @@ defmodule Formex.Ecto.ChangesetValidator do
 
   @spec validate(Form.t) :: Form.t
   def validate(form) do
+    # should be used `create_changeset` for collections validation
+    # anyway, `length` doesn't validate empty collections
+
     changeset = Formex.Ecto.Changeset.create_changeset_without_embedded(form)
 
     errors_fields = form

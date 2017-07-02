@@ -13,10 +13,26 @@ defmodule Formex.Ecto.Validator.ChangesetValidatorTest.UserType do
       :required,
       inclusion: [arg: 13..100, message: "you must be 13."]
     ])
+    # |> add(:user_addresses, Formex.Ecto.Validator.ChangesetValidatorTest.UserAddressType,
+    #   validation: [length: [min: 2]]
+    # )
   end
 
   def validator, do: Formex.Ecto.ChangesetValidator
 end
+
+# defmodule Formex.Ecto.Validator.ChangesetValidatorTest.UserAddressType do
+#   use Formex.Type
+#   use Formex.Ecto.Type
+#   use Formex.Ecto.ChangesetValidator
+
+#   def build_form(form) do
+#     form
+#     |> add(:street, :text_input, label: "Street", validation: [:required])
+#   end
+
+#   def validator, do: Formex.Ecto.ChangesetValidator
+# end
 
 defmodule Formex.Ecto.Validator.ChangesetValidatorTest do
   use Formex.Ecto.NestedCase

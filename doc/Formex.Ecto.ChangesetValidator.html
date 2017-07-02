@@ -8,9 +8,7 @@
     <title>Formex.Ecto.ChangesetValidator – formex_ecto v0.1.1</title>
     <link rel="stylesheet" href="dist/app-4ecae1abb8.css" />
     
-      <link rel="canonical" href="https://hexdocs.pm/formex_ecto/Formex.Ecto.ChangesetValidator.html" />
-    
-    <script src="dist/sidebar_items-e6049f0c6e.js"></script>
+    <script src="dist/sidebar_items-04b6ab1534.js"></script>
   </head>
   <body data-type="modules">
     <script>try { if(localStorage.getItem('night-mode')) document.body.className += ' night-mode'; } catch (e) { }</script>
@@ -82,9 +80,15 @@ Changesets. So if you already have a project with older Formex, you would have t
 validations. But you can also use this validator instead.</p>
 <p>Anyway, you can use any validator with any forms that uses Ecto.</p>
 <h1>Limitations</h1>
-<p>This validator can be used only with Ecto schemas.</p>
+<ul>
+<li>can be used only with Ecto schemas.
+</li>
+<li><code class="inline">length</code> validation for collections doesn’t work.
+  Maybe there is a way to fix it. If really need this now - use Vex validator instead.
+</li>
+</ul>
 <h1>Installation</h1>
-<p>See <a href="https://hexdocs.pm/formex/0.5.0/Formex.Validator.html"><code class="inline">Formex.Validator</code></a> docs.</p>
+<p>See <a href="https://hexdocs.pm/formex/0.5.3/Formex.Validator.html"><code class="inline">Formex.Validator</code></a> docs.</p>
 <h1>Usage</h1>
 <pre><code class="elixir">defmodule App.UserType do
   use Formex.Type
@@ -105,7 +109,7 @@ validations. But you can also use this validator instead.</p>
     format: [arg: ~r/@/]
   ])
   |&gt; add(:age, :text_input, validation: [
-    :required
+    :required,
     inclusion: [arg: 13..100, message: &quot;you must be 13.&quot;]
   ])
 end</code></pre>
@@ -157,7 +161,7 @@ end</code></pre>
     <a href="#validate/1">validate(form)</a>
   </div>
   
-    <div class="summary-synopsis"><p>Callback implementation for <a href="https://hexdocs.pm/formex/0.5.0/Formex.Validator.html#c:validate/1"><code class="inline">Formex.Validator.validate/1</code></a></p>
+    <div class="summary-synopsis"><p>Callback implementation for <a href="https://hexdocs.pm/formex/0.5.3/Formex.Validator.html#c:validate/1"><code class="inline">Formex.Validator.validate/1</code></a></p>
 </div>
   
 </div>
@@ -203,7 +207,7 @@ end</code></pre>
     </a>
     <span class="signature">validate(form)</span>
     
-      <a href="https://github.com/jakub-zawislak/formex_ecto/blob/master/lib/changeset_validator.ex#L97" class="view-source" rel="help" title="View Source">
+      <a href="https://github.com/jakub-zawislak/formex_ecto/blob/master/lib/changeset_validator.ex#L99" class="view-source" rel="help" title="View Source">
        <span class="icon-code" aria-hidden="true"></span>
        <span class="sr-only">View Source</span>
      </a>
@@ -212,13 +216,13 @@ end</code></pre>
     
       <div class="specs">
         
-          <pre>validate(<a href="https://hexdocs.pm/formex/0.5.0/Formex.Form.html#t:t/0">Formex.Form.t</a>) :: <a href="https://hexdocs.pm/formex/0.5.0/Formex.Form.html#t:t/0">Formex.Form.t</a></pre>
+          <pre>validate(<a href="https://hexdocs.pm/formex/0.5.3/Formex.Form.html#t:t/0">Formex.Form.t</a>) :: <a href="https://hexdocs.pm/formex/0.5.3/Formex.Form.html#t:t/0">Formex.Form.t</a></pre>
         
       </div>
     
   </div>
   <section class="docstring">
-    <p>Callback implementation for <a href="https://hexdocs.pm/formex/0.5.0/Formex.Validator.html#c:validate/1"><code class="inline">Formex.Validator.validate/1</code></a>.</p>
+    <p>Callback implementation for <a href="https://hexdocs.pm/formex/0.5.3/Formex.Validator.html#c:validate/1"><code class="inline">Formex.Validator.validate/1</code></a>.</p>
 
   </section>
 </div>
@@ -244,7 +248,7 @@ end</code></pre>
     </a>
     <span class="signature">changeset_validation(changeset, form)</span>
     
-      <a href="https://github.com/jakub-zawislak/formex_ecto/blob/master/lib/changeset_validator.ex#L143" class="view-source" rel="help" title="View Source">
+      <a href="https://github.com/jakub-zawislak/formex_ecto/blob/master/lib/changeset_validator.ex#L147" class="view-source" rel="help" title="View Source">
        <span class="icon-code" aria-hidden="true"></span>
        <span class="sr-only">View Source</span>
      </a>
@@ -253,7 +257,7 @@ end</code></pre>
     
       <div class="specs">
         
-          <pre>changeset_validation(changeset :: <a href="https://hexdocs.pm/ecto/2.1.4/Ecto.Changeset.html#t:t/0">Ecto.Changeset.t</a>, form :: <a href="https://hexdocs.pm/formex/0.5.0/Formex.Form.html#t:t/0">Formex.Form.t</a>) :: <a href="https://hexdocs.pm/formex/0.5.0/Formex.Form.html#t:t/0">Formex.Form.t</a></pre>
+          <pre>changeset_validation(changeset :: <a href="https://hexdocs.pm/ecto/2.1.4/Ecto.Changeset.html#t:t/0">Ecto.Changeset.t</a>, form :: <a href="https://hexdocs.pm/formex/0.5.3/Formex.Form.html#t:t/0">Formex.Form.t</a>) :: <a href="https://hexdocs.pm/formex/0.5.3/Formex.Form.html#t:t/0">Formex.Form.t</a></pre>
         
       </div>
     

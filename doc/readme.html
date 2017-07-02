@@ -8,9 +8,7 @@
     <title>Formex Ecto – formex_ecto v0.1.1</title>
     <link rel="stylesheet" href="dist/app-4ecae1abb8.css" />
     
-      <link rel="canonical" href="https://hexdocs.pm/formex_ecto/readme.html" />
-    
-    <script src="dist/sidebar_items-e6049f0c6e.js"></script>
+    <script src="dist/sidebar_items-04b6ab1534.js"></script>
   </head>
   <body data-type="extras">
     <script>try { if(localStorage.getItem('night-mode')) document.body.className += ' night-mode'; } catch (e) { }</script>
@@ -243,9 +241,21 @@ end</code></pre>
 <pre><code class="elixir">&lt;%= formex_form_for @form, article_path(@conn, :create), [method: :post], fn f -&gt; %&gt;</code></pre>
 <p>You don’t need to pass <code class="inline">:method</code> option, it’s set basing on <code class="inline">struct.id</code> value.</p>
 <h1>Tests</h1>
+<h2 id="test-database" class="section-heading">
+  <a href="#test-database" class="hover-link"><span class="icon-link" aria-hidden="true"></span></a>
+  Test database
+</h2>
+
+<p>Use <code class="inline">config/test.secret.example.exs</code> to create <code class="inline">config/test.secret.exs</code></p>
 <p>Run this command to migrate:</p>
-<pre><code class="bash">MIX_ENV=test mix ecto.migrate -r Formex.TestRepo</code></pre>
+<pre><code class="bash">MIX_ENV=test mix ecto.migrate -r Formex.Ecto.TestRepo</code></pre>
 <p>Now you can use tests via <code class="inline">mix test</code>.</p>
+<h2 id="creating-a-new-migration" class="section-heading">
+  <a href="#creating-a-new-migration" class="hover-link"><span class="icon-link" aria-hidden="true"></span></a>
+  Creating a new migration
+</h2>
+
+<pre><code class="bash">MIX_ENV=test mix ecto.gen.migration migration_name -r Formex.Ecto.TestRepo</code></pre>
 <h1>Docs</h1>
 <ul>
 <li><a href="https://hexdocs.pm/formex_ecto/Formex.Ecto.Controller.html">Controller</a> - controller helpers
