@@ -19,7 +19,7 @@ defmodule Formex.Ecto.ChangesetValidator do
 
   * can be used only with Ecto schemas.
   * `length` validation for collections doesn't work.
-    Maybe there is a way to fix it. If really need this now - use Vex validator instead.
+    Maybe there is a way to fix it. If you need this now - use Vex validator instead.
 
   # Installation
 
