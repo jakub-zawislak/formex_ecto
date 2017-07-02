@@ -220,11 +220,19 @@ You don't need to pass `:method` option, it's set basing on `struct.id` value.
 
 # Tests
 
+## Test database
+Use `config/test.secret.example.exs` to create `config/test.secret.exs`
+
 Run this command to migrate:
 ```bash
-MIX_ENV=test mix ecto.migrate -r Formex.TestRepo
+MIX_ENV=test mix ecto.migrate -r Formex.Ecto.TestRepo
 ```
 Now you can use tests via `mix test`.
+
+## Creating a new migration
+```bash
+MIX_ENV=test mix ecto.gen.migration migration_name -r Formex.Ecto.TestRepo
+```
 
 # Docs
 

@@ -32,8 +32,8 @@ defmodule Formex.Ecto.Mixfile do
     ]
 
     if !System.get_env("FORMEX_DEV") do
-      # deps ++ [{:formex, "~> 0.5.0"}]
-      deps ++ [{:formex, path: "../formex"}]
+      deps ++ [{:formex, "~> 0.5.0"}]
+      # deps ++ [{:formex, path: "../formex"}] # for tests with formex debugging
     else
       deps
     end

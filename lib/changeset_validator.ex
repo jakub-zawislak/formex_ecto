@@ -45,7 +45,7 @@ defmodule Formex.Ecto.ChangesetValidator do
       format: [arg: ~r/@/]
     ])
     |> add(:age, :text_input, validation: [
-      :required
+      :required,
       inclusion: [arg: 13..100, message: "you must be 13."]
     ])
   end

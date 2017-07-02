@@ -4,6 +4,7 @@ defmodule Formex.Ecto.TestModel.User do
   schema "users" do
     field :first_name, :string
     field :last_name, :string
+    field :age, :integer
 
     belongs_to :department, Formex.Ecto.TestModel.Department
     belongs_to :user_info, Formex.Ecto.TestModel.UserInfo
