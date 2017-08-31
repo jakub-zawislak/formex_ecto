@@ -100,16 +100,18 @@ defmodule Formex.Ecto.CustomField.SelectAssoc do
     |> String.to_atom
 
     module  = form.struct_module.__schema__(:association, name).related
-    opts    = parse_opts(module, opts)
-    choices = get_choices(module, opts)
+    opts    = opts
+    |> parse_opts(module)
+    |> put_choices(module)
 
-    Field.create_field(:select, name_id, choices: choices)
+    Field.create_field(:select, name_id, opts)
   end
 
   defp create_field_multiple(form, name, opts) do
     module  = form.struct_module.__schema__(:association, name).related
-    opts    = parse_opts(module, opts)
-    choices = get_choices(module, opts)
+    opts    = opts
+    |> parse_opts(module)
+    |> put_choices(module)
 
     selected = if form.struct.id do
       form.struct
@@ -120,21 +122,25 @@ defmodule Formex.Ecto.CustomField.SelectAssoc do
       []
     end
 
-    Field.create_field(:multiple_select, name, choices: choices, phoenix_opts: [
+    opts = Keyword.merge(opts, phoenix_opts: [
       selected: selected
     ])
+
+    Field.create_field(:multiple_select, name, opts)
   end
 
-  defp get_choices(module, opts) do
-    module
+  defp put_choices(opts, module) do
+    choices = module
     |> apply_query(opts[:query])
     |> apply_group_by_assoc(opts[:group_by])
     |> @repo.all
     |> group_rows(opts[:group_by])
     |> generate_choices(opts[:choice_label])
+
+    Keyword.put(opts, :choices, choices)
   end
 
-  defp parse_opts(module, opts) do
+  defp parse_opts(opts, module) do
     opts
     |> Keyword.update(:group_by, nil, fn(property_path) ->
 
