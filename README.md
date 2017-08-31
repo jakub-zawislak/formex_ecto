@@ -1,6 +1,6 @@
 # Formex Ecto
 
-Library that integrates Ecto with Formex.
+Library that integrates Ecto with [Formex](https://github.com/jakub-zawislak/formex).
 
 It also has an Ecto.Changeset validator adapter for those who want to easily migrate a project
 from old (< 0.5) Formex.
