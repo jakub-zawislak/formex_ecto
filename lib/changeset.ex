@@ -9,7 +9,7 @@ defmodule Formex.Ecto.Changeset do
   @spec create_changeset(form :: Form.t) :: Form.t
   def create_changeset(form) do
     form.struct
-    |> cast(form.params, get_normal_fields_names(form))
+    |> cast(form.mapped_params, get_normal_fields_names(form))
     |> cast_multiple_selects(form)
     |> cast_embedded_forms(form)
     |> form.type.changeset_after_create_callback(form)
@@ -18,7 +18,7 @@ defmodule Formex.Ecto.Changeset do
   @spec create_changeset_without_embedded(form :: Form.t) :: Form.t
   def create_changeset_without_embedded(form) do
     form.struct
-    |> cast(form.params, get_normal_fields_names(form))
+    |> cast(form.mapped_params, get_normal_fields_names(form))
     |> cast_multiple_selects(form)
     |> form.type.changeset_after_create_callback(form)
   end
@@ -28,7 +28,7 @@ defmodule Formex.Ecto.Changeset do
   defp get_normal_fields_names(form) do
     Form.get_fields(form)
     |> filter_normal_fields(form)
-    |> Enum.map(&(&1.name))
+    |> Enum.map(&(&1.struct_name))
   end
 
   # It will find only many_to_many and one_to_many associations (not many_to_one),
@@ -45,7 +45,7 @@ defmodule Formex.Ecto.Changeset do
     |> Enum.filter(&(&1.type == :multiple_select))
     |> Enum.reduce(changeset, fn field, changeset ->
       module = form.struct_module.__schema__(:association, field.name).related
-      ids    = form.params[to_string(field.name)] || []
+      ids    = form.mapped_params[to_string(field.name)] || []
 
       associated = module
       |> where([c], c.id in ^ids)
@@ -94,7 +94,7 @@ defmodule Formex.Ecto.Changeset do
                 subform = nested_form.form
 
                 changeset = create_changeset(subform)
-                |> cast(subform.params, [item.delete_field])
+                |> cast(subform.mapped_params, [item.delete_field])
 
                 if get_change(changeset, item.delete_field) do
                   %{changeset | action: :delete}
