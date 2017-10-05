@@ -222,9 +222,9 @@ You don't need to pass `:method` option, it's set basing on `struct.id` value.
 
 There is a callback `changeset_after_create_callback`. Examples:
 
-## Registration
+## Add something to an user during registration
 
-You can add additional changes that will be executed during registration
+You can add additional changes while user creation, such as hash of a password.
 
 ```elixir
 def build_form(form) do
@@ -241,7 +241,7 @@ def changeset_after_create_callback(changeset, _form) do
 end
 ```
 
-## Assign user to data
+## Assign current logged user to a data which he creates
 
 ### Controller
 
@@ -263,7 +263,7 @@ end
 
 ### Form type
 
-Assign user to article
+Assign user to a new article (and don't do it if it's an update action)
 
 ```elixir
 def build_form(form) do
@@ -271,8 +271,8 @@ def build_form(form) do
 end
 
 def changeset_after_create_callback(changeset, form) do
-  # check if it's create action
-  changeset = if !form.struct.id do
+  # check if it's a create action
+  if !form.struct.id do
     changeset
     |> Ecto.Changeset.put_assoc(:author, form.opts[:author]) # access author via form.opts[:author]
   else
