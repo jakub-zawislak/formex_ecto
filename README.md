@@ -218,6 +218,74 @@ You don't need to pass `:struct_module` option, it is taken from schema informat
 
 You don't need to pass `:method` option, it's set basing on `struct.id` value.
 
+# Changeset modification
+
+There is a callback `changeset_after_create_callback`. Examples:
+
+## Registration
+
+You can add additional changes that will be executed during registration
+
+```elixir
+def build_form(form) do
+  form
+  |> add(:email, :text_input)
+  |> add(:password, :password_input)
+  |> add(:save, :submit, label: "Register")
+end
+
+# Put additional changes that will be saved to database.
+def changeset_after_create_callback(changeset, _form) do
+  changeset
+  |> User.put_pass_hash
+end
+```
+
+## Assign user to data
+
+### Controller
+
+Get the current user and pass it to a form
+
+```elixir
+user = Guardian.Plug.current_resource(conn) # or similar
+
+ArticleType
+|> create_form(%Article{}, article_params, author: user) # store current logged user in opts
+|> insert_form_data
+|> case do
+  {:ok, _user_employee} ->
+    #
+  {:error, form} ->
+    #
+end
+```
+
+### Form type
+
+Assign user to article
+
+```elixir
+def build_form(form) do
+  #
+end
+
+def changeset_after_create_callback(changeset, form) do
+  # check if it's create action
+  changeset = if !form.struct.id do
+    changeset
+    |> Ecto.Changeset.put_assoc(:author, form.opts[:author]) # access author via form.opts[:author]
+  else
+    changeset
+  end
+end
+```
+
+## Limitations
+
+Don't use validation inside this callback - use `changeset_validation/2` from
+`Formex.Ecto.ChangesetValidator` instead
+
 # Tests
 
 ## Test database
