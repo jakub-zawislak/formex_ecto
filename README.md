@@ -302,6 +302,12 @@ Now you can use tests via `mix test`.
 MIX_ENV=test mix ecto.gen.migration migration_name -r Formex.Ecto.TestRepo
 ```
 
+# Troubleshooting
+
+## `nil.insert/1 is undefined or private` and so on (your Repo is `nil`)
+
+It happens when you forgot about the `repo` option in the configuration, or you set it after module compilation. To recompile the whole package use: `mix deps.compile formex_ecto --force`
+
 # Docs
 
 * [Controller](https://hexdocs.pm/formex_ecto/Formex.Ecto.Controller.html) - controller helpers
