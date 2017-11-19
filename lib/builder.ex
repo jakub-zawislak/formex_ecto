@@ -8,6 +8,7 @@ defimpl Formex.BuilderProtocol, for: Formex.BuilderType.Ecto do
   alias Formex.Field
   alias Formex.FormNested
   alias Formex.FormCollection
+  require Ecto.Query
 
   @repo Application.get_env(:formex, :repo)
 
@@ -54,9 +55,8 @@ defimpl Formex.BuilderProtocol, for: Formex.BuilderType.Ecto do
   #
 
   defp preload_assocs(form) do
-
-    # trzeba zrobić jeszcze tworzenie nowego struct dla nested gdy jest pusty
-    # albo obsłużyć fakt że jest pusty i nie wyświetlać forma
+    # TODO - creating a new struct for nested when it is nil,
+    # or handle that empty form and do not displaying it
 
     form.items
     |> Enum.filter(fn item ->
@@ -68,9 +68,14 @@ defimpl Formex.BuilderProtocol, for: Formex.BuilderType.Ecto do
       end
     end)
     |> Enum.reduce(form.struct, fn item, struct ->
+
       if is_assoc(form, item.name) do
+        queryable = struct.__struct__.__schema__(:association, item.name).queryable
+
         struct
-        |> @repo.preload(item.name)
+        |> @repo.preload([
+          {item.name, Ecto.Query.from(e in queryable, order_by: e.id)}
+        ])
       else
         struct
       end

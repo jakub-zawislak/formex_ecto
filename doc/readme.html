@@ -10,7 +10,7 @@
     
       <link rel="canonical" href="https://hexdocs.pm/formex_ecto/readme.html" />
     
-    <script src="dist/sidebar_items-04b6ab1534.js"></script>
+    <script src="dist/sidebar_items-51286b757e.js"></script>
   </head>
   <body data-type="extras">
     <script>try { if(localStorage.getItem('night-mode')) document.body.className += ' night-mode'; } catch (e) { }</script>
@@ -242,6 +242,66 @@ end</code></pre>
 
 <pre><code class="elixir">&lt;%= formex_form_for @form, article_path(@conn, :create), [method: :post], fn f -&gt; %&gt;</code></pre>
 <p>You don’t need to pass <code class="inline">:method</code> option, it’s set basing on <code class="inline">struct.id</code> value.</p>
+<h1>Changeset modification</h1>
+<p>There is a callback <code class="inline">changeset_after_create_callback</code>. Examples:</p>
+<h2 id="add-something-to-an-user-during-registration" class="section-heading">
+  <a href="#add-something-to-an-user-during-registration" class="hover-link"><span class="icon-link" aria-hidden="true"></span></a>
+  Add something to an user during registration
+</h2>
+
+<p>You can add additional changes while user creation, such as hash of a password.</p>
+<pre><code class="elixir">def build_form(form) do
+  form
+  |&gt; add(:email, :text_input)
+  |&gt; add(:password, :password_input)
+  |&gt; add(:save, :submit, label: &quot;Register&quot;)
+end
+
+# Put additional changes that will be saved to database.
+def changeset_after_create_callback(changeset, _form) do
+  changeset
+  |&gt; User.put_pass_hash
+end</code></pre>
+<h2 id="assign-current-logged-user-to-a-data-which-he-creates" class="section-heading">
+  <a href="#assign-current-logged-user-to-a-data-which-he-creates" class="hover-link"><span class="icon-link" aria-hidden="true"></span></a>
+  Assign current logged user to a data which he creates
+</h2>
+
+<h3>Controller</h3>
+<p>Get the current user and pass it to a form</p>
+<pre><code class="elixir">user = Guardian.Plug.current_resource(conn) # or similar
+
+ArticleType
+|&gt; create_form(%Article{}, article_params, author: user) # store current logged user in opts
+|&gt; insert_form_data
+|&gt; case do
+  {:ok, _user_employee} -&gt;
+    #
+  {:error, form} -&gt;
+    #
+end</code></pre>
+<h3>Form type</h3>
+<p>Assign user to a new article (and don’t do it if it’s an update action)</p>
+<pre><code class="elixir">def build_form(form) do
+  #
+end
+
+def changeset_after_create_callback(changeset, form) do
+  # check if it&#39;s a create action
+  if !form.struct.id do
+    changeset
+    |&gt; Ecto.Changeset.put_assoc(:author, form.opts[:author]) # access author via form.opts[:author]
+  else
+    changeset
+  end
+end</code></pre>
+<h2 id="limitations" class="section-heading">
+  <a href="#limitations" class="hover-link"><span class="icon-link" aria-hidden="true"></span></a>
+  Limitations
+</h2>
+
+<p>Don’t use validation inside this callback - use <code class="inline">changeset_validation/2</code> from
+<a href="Formex.Ecto.ChangesetValidator.html"><code class="inline">Formex.Ecto.ChangesetValidator</code></a> instead</p>
 <h1>Tests</h1>
 <h2 id="test-database" class="section-heading">
   <a href="#test-database" class="hover-link"><span class="icon-link" aria-hidden="true"></span></a>
