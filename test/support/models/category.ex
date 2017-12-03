@@ -6,4 +6,9 @@ defmodule Formex.Ecto.TestModel.Category do
 
     timestamps()
   end
+
+  def ordered(query) do
+    from c in query,
+      order_by: c.id
+  end
 end

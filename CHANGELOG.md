@@ -1,3 +1,6 @@
+## v0.1.5 (2017-12-03)
+* Added support for option `without_choices` in `SelectAssoc` - Formex 0.5.9
+
 ## v0.1.4 (2017-11-19)
 * Form collections ordered by id
 

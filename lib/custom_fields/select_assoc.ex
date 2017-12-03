@@ -21,6 +21,9 @@ defmodule Formex.Ecto.CustomField.SelectAssoc do
   Formex will find out that `:category_id` refers to App.Category schema and download all rows
   from Repo ordered by name.
 
+  If you are using `:without_choices` option (from `Formex.Field.create_field/3`), you don't
+  need to implement `:choice_label_provider`, this module will do it for you.
+
   ## Options
 
     * `choice_label` - controls the content of `<option>`. May be the name of a field or a function.
@@ -130,14 +133,32 @@ defmodule Formex.Ecto.CustomField.SelectAssoc do
   end
 
   defp put_choices(opts, module) do
-    choices = module
-    |> apply_query(opts[:query])
-    |> apply_group_by_assoc(opts[:group_by])
-    |> @repo.all
-    |> group_rows(opts[:group_by])
-    |> generate_choices(opts[:choice_label])
+    if !opts[:without_choices] do
+      choices = module
+      |> apply_query(opts[:query])
+      |> apply_group_by_assoc(opts[:group_by])
+      |> @repo.all
+      |> group_rows(opts[:group_by])
+      |> generate_choices(opts[:choice_label])
 
-    Keyword.put(opts, :choices, choices)
+      Keyword.put(opts, :choices, choices)
+
+    else
+      Keyword.put(opts, :choice_label_provider, fn id ->
+
+        row = from(e in module, where: e.id == ^id)
+        |> apply_query(opts[:query])
+        |> apply_group_by_assoc(opts[:group_by])
+        |> @repo.one
+
+        if row do
+          get_choice_label_val(row, opts[:choice_label])
+        else
+          nil
+        end
+
+      end)
+    end
   end
 
   defp parse_opts(opts, module) do
@@ -183,18 +204,7 @@ defmodule Formex.Ecto.CustomField.SelectAssoc do
   defp generate_choices(rows, choice_label) when is_list(rows) do
     rows
     |> Enum.map(fn row ->
-      label = cond do
-        is_function(choice_label) ->
-          choice_label.(row)
-        !is_nil(choice_label) ->
-          Map.get(row, choice_label)
-        true ->
-          if Map.has_key? row, :name do
-            row.name
-          else
-            throw "Key :name not found. You should use the :choice_label option of SelectAssoc"
-          end
-      end
+      label = get_choice_label_val(row, choice_label)
 
       {label, row.id}
     end)
@@ -209,6 +219,21 @@ defmodule Formex.Ecto.CustomField.SelectAssoc do
       {group_label, generate_choices(rows, choice_label)}
     end)
     |> Map.new(&(&1))
+  end
+
+  defp get_choice_label_val(row, choice_label) do
+    cond do
+      is_function(choice_label) ->
+        choice_label.(row)
+      !is_nil(choice_label) ->
+        Map.get(row, choice_label)
+      true ->
+        if Map.has_key? row, :name do
+          row.name
+        else
+          throw "Key :name not found. You should use the :choice_label option of SelectAssoc"
+        end
+    end
   end
 
 end

@@ -23,6 +23,10 @@ defimpl Formex.BuilderProtocol, for: Formex.BuilderType.Ecto do
     |> Map.put(:method, method)
     |> Form.finish_creating
 
+    # form = form
+    # |> Map.put(:data,   Keyword.put(form.data, :original_struct, form.struct))
+    # |> Map.put(:struct, copy_preloads_to_struct(form))
+
     Map.put(args, :form, form)
   end
 
@@ -81,6 +85,37 @@ defimpl Formex.BuilderProtocol, for: Formex.BuilderType.Ecto do
       end
     end)
   end
+
+  # written for 0.1.5 and never used. maybe it will be useful some day
+  # defp copy_preloads_to_struct(form) do
+  #   struct = form.items
+  #   |> Enum.filter(fn item ->
+  #     case item do
+  #       %FormNested{}     -> true
+  #       %FormCollection{} -> true
+  #       _                 -> false
+  #     end
+  #   end)
+  #   |> Enum.reduce(form.struct, fn item, struct ->
+
+  #     if is_assoc(form, item.name) do
+  #       {key, val} = case item do
+  #         %FormNested{} ->
+  #           {item.name, copy_preloads_to_struct(item.form)}
+
+  #         %FormCollection{} ->
+  #           {item.name, Enum.map(item.forms, fn nested ->
+  #             copy_preloads_to_struct(nested.form)
+  #           end)}
+  #       end
+
+  #       Map.put(struct, key, val)
+  #     else
+  #       struct
+  #     end
+
+  #   end)
+  # end
 
   @doc false
   @spec get_assoc_or_embed(form :: Form.t, name :: Atom.t) :: any

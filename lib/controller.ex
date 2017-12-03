@@ -1,6 +1,6 @@
 defmodule Formex.Ecto.Controller do
   alias Formex.Form
-  alias Formex.Validator
+  alias Formex.Builder
   import Formex.Ecto.Changeset
   @repo Application.get_env(:formex, :repo)
 
@@ -79,7 +79,7 @@ defmodule Formex.Ecto.Controller do
   """
   @spec insert_form_data(Form.t) :: {:ok, Ecto.Schema.t} | {:error, Form.t}
   def insert_form_data(form) do
-    form = form |> Validator.validate()
+    form = Builder.handle_submit(form)
 
     if form.valid? do
       form
@@ -100,7 +100,7 @@ defmodule Formex.Ecto.Controller do
   """
   @spec update_form_data(Form.t) :: {:ok, Ecto.Schema.t} | {:error, Form.t}
   def update_form_data(form) do
-    form = form |> Validator.validate()
+    form = Builder.handle_submit(form)
 
     if form.valid? do
       form
