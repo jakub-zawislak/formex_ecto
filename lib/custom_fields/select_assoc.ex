@@ -125,9 +125,11 @@ defmodule Formex.Ecto.CustomField.SelectAssoc do
       []
     end
 
-    opts = Keyword.merge(opts, phoenix_opts: [
+    phoenix_opts = Keyword.merge(opts[:phoenix_opts], [
       selected: selected
     ])
+
+    opts = Keyword.merge(opts, phoenix_opts: phoenix_opts)
 
     Field.create_field(:multiple_select, name, opts)
   end

@@ -1,5 +1,6 @@
-## v0.1.5 (2017-12-03)
+## v0.1.5 (2017-12-05)
 * Added support for option `without_choices` in `SelectAssoc` - Formex 0.5.9
+* Fixed `phoenix_opts` in `multiple_select` in `SelectAssoc`
 
 ## v0.1.4 (2017-11-19)
 * Form collections ordered by id
