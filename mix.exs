@@ -41,7 +41,7 @@ defmodule Formex.Ecto.Mixfile do
 
   defp description do
     """
-    Formex Ecto
+    Ecto integration for Formex form library
     """
   end
 
