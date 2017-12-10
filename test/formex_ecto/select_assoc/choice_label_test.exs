@@ -47,7 +47,7 @@ defmodule Formex.Ecto.SelectAssoc.ChoiceLabelTest do
     choices = Enum.at(form.items, 0).data[:choices]
     choice  = Enum.at(choices, 0)
     {choice_label, _} = choice
-    assert choice_label == "asdasd"
+    assert choice_label == "ElixirElixir"
   end
 
 end

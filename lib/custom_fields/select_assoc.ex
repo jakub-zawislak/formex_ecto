@@ -2,6 +2,7 @@ defmodule Formex.Ecto.CustomField.SelectAssoc do
   @behaviour Formex.CustomField
   import Ecto.Query
   alias Formex.Field
+  alias Formex.Form
 
   @repo Application.get_env(:formex, :repo)
 
@@ -87,6 +88,17 @@ defmodule Formex.Ecto.CustomField.SelectAssoc do
       form
       |> add(:user_id, SelectAssoc, group_by: [:department, :description])
       ```
+
+    * `search_field` - schema field to be used in query in `search/3`.
+      If it's a `nil`, then the final value depends on the `choice_label` value:
+      * if `:choice_label` is nil, `:search_field` becomes `:name`
+      * if `:choice_label` is an atom, `:search_field` gets this atom
+      * if `:choice_label` is a function, `:search_field` is still nil
+
+    * `search_query` - if the `search_field` functionality is not enough for you, use this
+      to apply your own query. It's necessary if you have more than one field to search,
+      e.g. first name and last name.
+
   """
 
   @doc false
@@ -98,12 +110,76 @@ defmodule Formex.Ecto.CustomField.SelectAssoc do
     end
   end
 
+  @doc """
+  Can be used in controller, along with `:without_choices` option from
+  `Formex.Field.create_field/3`.
+
+  It gets rows from repo that matches given `search` argument and returns them as
+  `{label, id}` list.
+
+  Example of use for
+  [Ajax-Bootstrap-Select](https://github.com/truckingsim/Ajax-Bootstrap-Select):
+
+  ```
+  def search_categories(conn, %{"q" => search}) do
+    result = create_form(App.ArticleType, %Article{})
+    |> Formex.Ecto.CustomField.SelectAssoc.search(:category_id, search)
+    |> Enum.map(fn {label, id} -> %{
+      "value" => id,
+      "text"  => label
+     } end)
+
+    json(conn, result)
+  end
+  ```
+  """
+  @spec search(form :: Form.t, name :: atom, search :: String.t) :: List.t
+  def search(form, name, search) do
+    name_id = Regex.replace(~r/_id$/, Atom.to_string(name), "")
+    |> String.to_atom
+
+    search = "%"<>search<>"%"
+
+    module  = form.struct_module.__schema__(:association, name_id).related
+
+    form_field = Form.find(form, name)
+    opts = form_field.opts
+
+    query = if opts[:search_query] do
+      opts[:search_query].(module, search)
+
+    else
+      search_field = case opts[:search_field] do
+        x when is_atom(x) and not is_nil(x) ->
+          x
+        _ ->
+          case opts[:choice_label] do
+            x when is_atom(x) and not is_nil(x) ->
+              x
+            x when is_nil(x) ->
+              :name
+            x when is_function(x) ->
+              raise "Provide a value for :search_field option in #{name} field"
+          end
+      end
+
+      from(e in module, where: like(field(e, ^search_field), ^search) )
+    end
+
+    query
+    |> apply_query(opts[:query])
+    |> @repo.all
+    |> group_rows(opts[:group_by])
+    |> generate_choices(opts[:choice_label])
+  end
+
   defp create_field_single(form, name_id, opts) do
     name = Regex.replace(~r/_id$/, Atom.to_string(name_id), "")
     |> String.to_atom
 
-    module  = form.struct_module.__schema__(:association, name).related
-    opts    = opts
+    module = form.struct_module.__schema__(:association, name).related
+
+    opts = opts
     |> parse_opts(module)
     |> put_choices(module)
 
@@ -111,8 +187,9 @@ defmodule Formex.Ecto.CustomField.SelectAssoc do
   end
 
   defp create_field_multiple(form, name, opts) do
-    module  = form.struct_module.__schema__(:association, name).related
-    opts    = opts
+    module = form.struct_module.__schema__(:association, name).related
+
+    opts = opts
     |> parse_opts(module)
     |> put_choices(module)
 
@@ -125,7 +202,7 @@ defmodule Formex.Ecto.CustomField.SelectAssoc do
       []
     end
 
-    phoenix_opts = Keyword.merge(opts[:phoenix_opts], [
+    phoenix_opts = Keyword.merge(opts[:phoenix_opts] || [], [
       selected: selected
     ])
 
@@ -233,7 +310,10 @@ defmodule Formex.Ecto.CustomField.SelectAssoc do
         if Map.has_key? row, :name do
           row.name
         else
-          throw "Key :name not found. You should use the :choice_label option of SelectAssoc"
+          throw """
+            Field :name not found in the schema.
+            You should provide the :choice_label value in SelectAssoc
+            """
         end
     end
   end

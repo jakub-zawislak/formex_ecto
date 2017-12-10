@@ -8,7 +8,7 @@ defmodule Formex.Ecto.SelectAssocChoiceQueryTestType do
     form
     |> add(:category_id, Formex.Ecto.CustomField.SelectAssoc, query: fn query ->
       from e in query,
-        where: e.name != "bcd"
+        where: e.name != "Elixir"
     end, validation: [:required])
   end
 end
@@ -29,8 +29,8 @@ defmodule Formex.Ecto.SelectAssoc.QueryTest do
     {choice0, _} = Enum.at(choices, 0)
     {choice1, _} = Enum.at(choices, 1)
 
-    assert choice0 == "asd"
-    assert choice1 == "cfg"
+    assert choice0 == "Phoenix"
+    assert choice1 == "Programming"
   end
 
 end

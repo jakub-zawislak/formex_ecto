@@ -1,3 +1,6 @@
+## v0.1.6 (2017-12-10)
+* Added `search` function in `SelectAssoc`, to be used with Ajax select plugins.
+
 ## v0.1.5 (2017-12-05)
 * Added support for option `without_choices` in `SelectAssoc` - Formex 0.5.9
 * Fixed `phoenix_opts` in `multiple_select` in `SelectAssoc`

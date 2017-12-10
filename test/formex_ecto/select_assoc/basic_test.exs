@@ -30,7 +30,7 @@ defmodule Formex.Ecto.SelectAssoc.BasicTest do
 
     form_str = form_html |> to_string
 
-    assert String.match?(form_str, ~r/asd/)
+    assert String.match?(form_str, ~r/Programming/)
     assert String.match?(form_str, ~r/tag1/)
     assert String.match?(form_str, ~r/multiple/)
   end

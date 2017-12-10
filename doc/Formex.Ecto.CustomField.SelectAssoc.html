@@ -8,7 +8,7 @@
     <title>Formex.Ecto.CustomField.SelectAssoc – formex_ecto v0.1.5</title>
     <link rel="stylesheet" href="dist/app-4ecae1abb8.css" />
     
-    <script src="dist/sidebar_items-9e533da484.js"></script>
+    <script src="dist/sidebar_items-b8f3af0b39.js"></script>
   </head>
   <body data-type="modules">
     <script>try { if(localStorage.getItem('night-mode')) document.body.className += ' night-mode'; } catch (e) { }</script>
@@ -128,7 +128,57 @@ end</code></pre>
 <pre><code class="elixir">form
 |&gt; add(:user_id, SelectAssoc, group_by: [:department, :description])</code></pre>
 </li>
+<li><p><code class="inline">search_field</code> - schema field to be used in query in <a href="#search/3"><code class="inline">search/3</code></a>.
+If it’s a <code class="inline">nil</code>, then the final value depends on the <code class="inline">choice_label</code> value:</p>
+<ul>
+<li>if <code class="inline">:choice_label</code> is nil, <code class="inline">:search_field</code> becomes <code class="inline">:name</code>
+</li>
+<li>if <code class="inline">:choice_label</code> is an atom, <code class="inline">:search_field</code> gets this atom
+</li>
+<li>if <code class="inline">:choice_label</code> is a function, <code class="inline">:search_field</code> is still nil
+</li>
 </ul>
+</li>
+<li><p><code class="inline">search_query</code> - if the <code class="inline">search_field</code> functionality is not enough for you, use this
+to apply your own query. It’s necessary if you have more than one field to search,
+e.g. first name and last name.</p>
+</li>
+</ul>
+
+        </section>
+      
+
+      
+        <section id="summary" class="details-list">
+          <h1 class="section-heading">
+            <a class="hover-link" href="#summary">
+              <span class="icon-link" aria-hidden="true"></span>
+              <span class="sr-only">Link to this section</span>
+            </a>
+            Summary
+          </h1>
+          
+
+          
+  <div class="summary-functions summary">
+    <h2>
+      <a href="#functions">Functions</a>
+    </h2>
+    <div class="summary-row">
+  <div class="summary-signature">
+    <a href="#search/3">search(form, name, search)</a>
+  </div>
+  
+    <div class="summary-synopsis"><p>Can be used in controller, along with <code class="inline">:without_choices</code> option from
+<a href="https://hexdocs.pm/formex/0.5.9/Formex.Field.html#create_field/3"><code class="inline">Formex.Field.create_field/3</code></a></p>
+</div>
+  
+</div>
+
+  </div>
+
+
+          
 
         </section>
       
@@ -136,7 +186,59 @@ end</code></pre>
       
 
       
+        <section id="functions" class="details-list">
+          <h1 class="section-heading">
+            <a class="hover-link" href="#functions">
+              <span class="icon-link" aria-hidden="true"></span>
+              <span class="sr-only">Link to this section</span>
+            </a>
+            Functions
+          </h1>
+          <div class="detail" id="search/3">
+  
+  <div class="detail-header">
+    <a href="#search/3" class="detail-link" title="Link to this function">
+      <span class="icon-link" aria-hidden="true"></span>
+      <span class="sr-only">Link to this function</span>
+    </a>
+    <span class="signature">search(form, name, search)</span>
+    
+      <a href="https://github.com/jakub-zawislak/formex_ecto/blob/master/lib/custom_fields/select_assoc.ex#L137" class="view-source" rel="help" title="View Source">
+       <span class="icon-code" aria-hidden="true"></span>
+       <span class="sr-only">View Source</span>
+     </a>
+    
+    
+    
+      <div class="specs">
+        
+          <pre>search(form :: <a href="https://hexdocs.pm/formex/0.5.9/Formex.Form.html#t:t/0">Formex.Form.t</a>, name :: atom, search :: <a href="https://hexdocs.pm/elixir/String.html#t:t/0">String.t</a>) :: <a href="https://hexdocs.pm/elixir/List.html#t:t/0">List.t</a></pre>
+        
+      </div>
+    
+  </div>
+  <section class="docstring">
+    <p>Can be used in controller, along with <code class="inline">:without_choices</code> option from
+<a href="https://hexdocs.pm/formex/0.5.9/Formex.Field.html#create_field/3"><code class="inline">Formex.Field.create_field/3</code></a>.</p>
+<p>It gets rows from repo that matches given <code class="inline">search</code> argument and returns them as
+<code class="inline">{label, id}</code> list.</p>
+<p>Example of use for
+<a href="https://github.com/truckingsim/Ajax-Bootstrap-Select">Ajax-Bootstrap-Select</a>:</p>
+<pre><code class="elixir">def search_categories(conn, %{&quot;q&quot; =&gt; search}) do
+  result = create_form(App.ArticleType, %Article{})
+  |&gt; Formex.Ecto.CustomField.SelectAssoc.search(:category_id, search)
+  |&gt; Enum.map(fn {label, id} -&gt; %{
+    &quot;value&quot; =&gt; id,
+    &quot;text&quot;  =&gt; label
+   } end)
 
+  json(conn, result)
+end</code></pre>
+
+  </section>
+</div>
+
+        </section>
       
 
       

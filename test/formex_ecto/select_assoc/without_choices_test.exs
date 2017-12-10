@@ -2,16 +2,13 @@ defmodule Formex.Ecto.SelectAssocWithoutChoicesType do
   use Formex.Type
   use Formex.Ecto.Type
   require Formex.Ecto.CustomField.SelectAssoc
+  alias Formex.Ecto.CustomField.SelectAssoc
 
   def build_form(form) do
     form
     |> add(:title, :text_input, validation: [:required])
-    |> add(:category_id, Formex.Ecto.CustomField.SelectAssoc, phoenix_opts: [
-      prompt: "Choose category"
-    ], validation: [:required], without_choices: true)
-    |> add(:tags, Formex.Ecto.CustomField.SelectAssoc, phoenix_opts: [
-      prompt: "Choose tag"
-    ], validation: [:required])
+    |> add(:category_id, SelectAssoc, without_choices: true)
+    |> add(:tags, SelectAssoc)
   end
 end
 

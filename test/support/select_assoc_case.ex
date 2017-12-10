@@ -5,20 +5,21 @@ defmodule Formex.Ecto.SelectAssocCase do
       import Formex.Builder
       alias Formex.Ecto.TestModel.Article
       alias Formex.Ecto.TestModel.Category
+      alias Formex.Ecto.TestModel.Tag
       alias Formex.Ecto.TestModel.User
       alias Formex.Ecto.TestModel.Department
       alias Formex.Ecto.TestRepo
 
       def insert_categories() do
-        TestRepo.insert(%Category{name: "asd"})
-        TestRepo.insert(%Category{name: "bcd"})
-        TestRepo.insert(%Category{name: "cfg"})
+        TestRepo.insert(%Category{name: "Programming"})
+        TestRepo.insert(%Category{name: "Elixir"})
+        TestRepo.insert(%Category{name: "Phoenix"})
       end
 
       def insert_tags() do
-        TestRepo.insert(%Category{name: "tag1"})
-        TestRepo.insert(%Category{name: "tag2"})
-        TestRepo.insert(%Category{name: "tag3"})
+        TestRepo.insert(%Tag{name: "tag1"})
+        TestRepo.insert(%Tag{name: "tag2"})
+        TestRepo.insert(%Tag{name: "tag3"})
       end
 
       def insert_users() do
