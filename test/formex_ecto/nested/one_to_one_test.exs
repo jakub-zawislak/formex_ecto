@@ -58,15 +58,15 @@ defmodule Formex.Ecto.Nested.OneToOneTest do
 
     user = get_first_user()
 
-    params      = %{"user_info" => %{"section" => ""}}
+    params      = %{"first_name" => "a", "last_name" => "a", "user_info" => %{"section" => ""}}
     form        = create_form(UserType, user, params)
     {:error, _} = update_form_data(form)
 
-    params      = %{"user_info" => %{"section" => "s"}}
+    params      = %{"first_name" => "a", "last_name" => "a", "user_info" => %{"section" => "s"}}
     form        = create_form(UserType, user, params)
     {:ok, user} = update_form_data(form)
 
-    params      = %{"user_info" => %{"id" => user.user_info.id, "section" => "a"}}
+    params      = %{"first_name" => "a", "last_name" => "a", "user_info" => %{"id" => user.user_info.id, "section" => "a"}}
     user        = get_first_user() # download it again, we want unloaded user_info
 
     form        = create_form(UserType, user, params)

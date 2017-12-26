@@ -66,19 +66,19 @@ defmodule Formex.Ecto.Collection.EmbedsManyTest do
 
     user = get_user(0)
 
-    params      = %{"schools" => %{
+    params      = %{"first_name" => "a", "last_name" => "a", "schools" => %{
       "0" => %{"name" => ""}
     }}
     form        = create_form(UserType, user, params)
     {:error, _} = update_form_data(form)
 
-    params      = %{"schools" => %{
+    params      = %{"first_name" => "a", "last_name" => "a", "schools" => %{
       "0" => %{"name" => "name0"}
     }}
     form        = create_form(UserType, user, params)
     {:ok, user} = update_form_data(form)
 
-    params      = %{"schools" => %{
+    params      = %{"first_name" => "a", "last_name" => "a", "schools" => %{
       "0" => %{"id" => Enum.at(user.schools, 0).id, "name" => "name0new"},
       "1" => %{"formex_id" => "1", "name" => "name1"},
       "2" => %{"formex_id" => "2", "name" => "name2"}
@@ -97,16 +97,19 @@ defmodule Formex.Ecto.Collection.EmbedsManyTest do
 
     user = get_user(1)
 
-    params      = %{"schools" => %{
-      "0" => %{"id" => Enum.at(user.schools, 0).id,
+    school1 = Enum.at(user.schools, 0)
+    school2 = Enum.at(user.schools, 1)
+
+    params      = %{"first_name" => "a", "last_name" => "a", "schools" => %{
+      "0" => %{"id" => school1.id, "name" => "a",
         "formex_delete" => "true"},
-      "1" => %{"id" => Enum.at(user.schools, 1).id}
+      "1" => %{"id" => school2.id, "name" => "a"}
     }}
     form        = create_form(UserType, user, params)
     {:ok, _} = update_form_data(form)
 
     user = get_user(1)
 
-    assert Enum.at(user.schools, 0).name == "Liceum"
+    assert Enum.at(user.schools, 0).id == school2.id
   end
 end

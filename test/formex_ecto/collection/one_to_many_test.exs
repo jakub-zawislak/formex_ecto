@@ -92,19 +92,19 @@ defmodule Formex.Ecto.Collection.OneToManyTest do
 
     user = get_user(0)
 
-    params      = %{"user_addresses" => %{
+    params      = %{"first_name" => "a", "last_name" => "a", "user_addresses" => %{
       "0" => %{"street" => ""}
     }}
     form        = create_form(UserType, user, params)
     {:error, _} = update_form_data(form)
 
-    params      = %{"user_addresses" => %{
+    params      = %{"first_name" => "a", "last_name" => "a", "user_addresses" => %{
       "0" => %{"street" => "s0", "postal_code" => "p0", "city" => "c0"}
     }}
     form        = create_form(UserType, user, params)
     {:ok, user} = update_form_data(form)
 
-    params      = %{"user_addresses" => %{
+    params      = %{"first_name" => "a", "last_name" => "a", "user_addresses" => %{
       "0" => %{"id" => Enum.at(user.user_addresses, 0).id |> Integer.to_string,
         "street" => "s0new", "postal_code" => "p0new", "city" => "c0new"},
       "1" => %{"formex_id" => "1",
@@ -126,17 +126,22 @@ defmodule Formex.Ecto.Collection.OneToManyTest do
 
     user = get_user(1)
 
-    params      = %{"user_addresses" => %{
-      "0" => %{"id" => Enum.at(user.user_addresses, 0).id |> Integer.to_string,
+    address1 = Enum.at(user.user_addresses, 0)
+    address2 = Enum.at(user.user_addresses, 1)
+
+    params      = %{"first_name" => "a", "last_name" => "a", "user_addresses" => %{
+      "0" => %{"id" => address1.id |> Integer.to_string,
+        "street" => "a", "postal_code" => "a", "city" => "a",
         "formex_delete" => "true"},
-      "1" => %{"id" => Enum.at(user.user_addresses, 1).id |> Integer.to_string}
+      "1" => %{"id" => address2.id |> Integer.to_string,
+        "street" => "a", "postal_code" => "a", "city" => "a"}
     }}
     form        = create_form(UserType, user, params)
     {:ok, _} = update_form_data(form)
 
     user = get_user(1)
 
-    assert Enum.at(user.user_addresses, 0).city == "Olsztyn"
+    assert Enum.at(user.user_addresses, 0).id == address2.id
   end
 
   # test "filter accounts" do
