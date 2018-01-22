@@ -48,8 +48,8 @@ defmodule Formex.Ecto.Type do
       # ...
     end
 
-    # `cast_attachments` from `Arc.Ecto` doesn't work if we used `Ecto.Changeset.cast/4` on `:image`
-    # (`Formex.Ecto.Changest` does this automatically), therefore we must indicate that this field
+    # Arc.Ecto.cast_attachments doesn't work if we used Ecto.Changeset.cast/3 on :image
+    # (Formex.Ecto.Changest does this automatically), therefore we must indicate that this field
     # will be casted manually
     def fields_casted_manually(_form) do
       [:image]
