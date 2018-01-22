@@ -1,3 +1,7 @@
+## v0.1.7 (2018-01-22)
+* Added ability to control which fields will be casted via `Ecto.Changeset.cast/3`.
+  It was required by packages like `Arc.Ecto`.
+
 ## v0.1.6 (2017-12-10)
 * Added `search` function in `SelectAssoc`, to be used with Ajax select plugins.
 

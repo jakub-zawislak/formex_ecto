@@ -5,7 +5,7 @@
     <meta http-equiv="x-ua-compatible" content="ie=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="generator" content="ExDoc v0.16.1">
-    <title>API Reference – formex_ecto v0.1.7</title>
+    <title>Guides – formex_ecto v0.1.7</title>
     <link rel="stylesheet" href="dist/app-4ecae1abb8.css" />
     
     <script src="dist/sidebar_items-359751927d.js"></script>
@@ -60,65 +60,39 @@
     <div id="content" class="content-inner">
 
 
-<h1>
-  <small class="visible-xs">formex_ecto v0.1.7</small>
-  API Reference
-</h1>
-
-
-  <section class="details-list">
-    <h2 id="modules" class="section-heading">
-  <a href="#modules" class="hover-link"><span class="icon-link" aria-hidden="true"></span></a>
-  Modules
+<h1>Guides</h1>
+<h2 id="uploading-files-with-arc-ecto" class="section-heading">
+  <a href="#uploading-files-with-arc-ecto" class="hover-link"><span class="icon-link" aria-hidden="true"></span></a>
+  Uploading files with <a href="https://github.com/stavro/arc_ecto">Arc.Ecto</a>
 </h2>
 
-    <div class="summary">
-      <div class="summary-row">
-  <div class="summary-signature"><a href="Formex.Ecto.Changeset.html">Formex.Ecto.Changeset</a></div>
-  
-</div>
-<div class="summary-row">
-  <div class="summary-signature"><a href="Formex.Ecto.ChangesetValidator.html">Formex.Ecto.ChangesetValidator</a></div>
-  
-    <div class="summary-synopsis"><p>Changeset validator adapter for Formex</p>
-</div>
-  
-</div>
-<div class="summary-row">
-  <div class="summary-signature"><a href="Formex.Ecto.Controller.html">Formex.Ecto.Controller</a></div>
-  
-    <div class="summary-synopsis"><p>Ecto helpers for controller</p>
-</div>
-  
-</div>
-<div class="summary-row">
-  <div class="summary-signature"><a href="Formex.Ecto.CustomField.SelectAssoc.html">Formex.Ecto.CustomField.SelectAssoc</a></div>
-  
-    <div class="summary-synopsis"><p>This module generates a <code class="inline">:select</code> field with options downloaded from Repo</p>
-</div>
-  
-</div>
-<div class="summary-row">
-  <div class="summary-signature"><a href="Formex.Ecto.Schema.html">Formex.Ecto.Schema</a></div>
-  
-</div>
-<div class="summary-row">
-  <div class="summary-signature"><a href="Formex.Ecto.Type.html">Formex.Ecto.Type</a></div>
-  
-    <div class="summary-synopsis"><p>Module that must be used in form types that uses Ecto</p>
-</div>
-  
-</div>
+<h3>Type file</h3>
+<pre><code class="elixir">defmodule App.ArticleType do
+  # ...
+  use Arc.Ecto.Schema
+  import Ecto.Changeset, only: [cast: 3]
 
-    </div>
-  </section>
+  def build_form(form) do
+    form
+    #...
+    |&gt; add(:image, :file_input)
+  end
 
+  def fields_casted_manually(_form) do
+    [:image]
+  end
 
+  def changeset_after_create_callback(changeset, _form) do
+    changeset
+    |&gt; cast_attachments(changeset.params, [:image])
+  end
 
-
-
-
-
+end</code></pre>
+<h3>View</h3>
+<p>Add a <code class="inline">multipart: true</code> option</p>
+<pre><code class="elixir">&lt;%= formex_form_for @form, @action, [multipart: true], fn f -&gt; %&gt;
+  ...
+&lt;%= end %&gt;</code></pre>
 
       <footer class="footer">
         <p>

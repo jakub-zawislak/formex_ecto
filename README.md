@@ -3,7 +3,7 @@
 Library that integrates Ecto with [Formex](https://github.com/jakub-zawislak/formex).
 
 It also has an Ecto.Changeset validator adapter for those who want to easily migrate a project
-from old (< 0.5) Formex.
+from old (< 0.5) Formex or just prefer Changeset's validation.
 
 # Instalation
 
@@ -304,16 +304,22 @@ MIX_ENV=test mix ecto.gen.migration migration_name -r Formex.Ecto.TestRepo
 
 # Troubleshooting
 
-## `nil.insert/1 is undefined or private` and so on (your Repo is `nil`)
+## Repo is `nil`
 
-It happens when you forgot about the `repo` option in the configuration, or you set it after module compilation. To recompile the whole package use: `mix deps.compile formex_ecto --force`
+Do you have some weird "`nil.insert/1 is undefined or private`" error?
+
+It happens when you forgot about the `repo` option in the configuration or you set it after package compilation.
+To recompile the whole package use: `mix deps.compile formex_ecto --force`
 
 # Docs
 
 * [Controller](https://hexdocs.pm/formex_ecto/Formex.Ecto.Controller.html) - controller helpers
-* [Form Type](https://hexdocs.pm/formex_ecto/Formex.Ecto.Type.html) - changeset modification
+* [Form Type](https://hexdocs.pm/formex_ecto/Formex.Ecto.Type.html) - add your custom code to a changeset
 * [Changeset validator adapter](https://hexdocs.pm/formex_ecto/Formex.Ecto.ChangesetValidator.html) -
   validation using Ecto.Changeset, adding errors to a changeset
 
 ## Custom fields
 * [SelectAssoc](https://hexdocs.pm/formex_ecto/Formex.Ecto.CustomField.SelectAssoc.html)
+
+## Guides
+* [Uploading files with Arc.Ecto](https://hexdocs.pm/formex_ecto/guides.html#uploading-files-with-arc-ecto)

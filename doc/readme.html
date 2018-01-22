@@ -5,12 +5,10 @@
     <meta http-equiv="x-ua-compatible" content="ie=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="generator" content="ExDoc v0.16.1">
-    <title>Formex Ecto – formex_ecto v0.1.6</title>
+    <title>Formex Ecto – formex_ecto v0.1.7</title>
     <link rel="stylesheet" href="dist/app-4ecae1abb8.css" />
     
-      <link rel="canonical" href="https://hexdocs.pm/formex_ecto/readme.html" />
-    
-    <script src="dist/sidebar_items-b8f3af0b39.js"></script>
+    <script src="dist/sidebar_items-359751927d.js"></script>
   </head>
   <body data-type="extras">
     <script>try { if(localStorage.getItem('night-mode')) document.body.className += ' night-mode'; } catch (e) { }</script>
@@ -29,7 +27,7 @@
         formex_ecto
       </h1>
       <h2 class="sidebar-projectVersion">
-        v0.1.6
+        v0.1.7
       </h2>
     </div>
     
@@ -65,7 +63,7 @@
 <h1>Formex Ecto</h1>
 <p>Library that integrates Ecto with <a href="https://github.com/jakub-zawislak/formex">Formex</a>.</p>
 <p>It also has an Ecto.Changeset validator adapter for those who want to easily migrate a project
-from old (&lt; 0.5) Formex.</p>
+from old (&lt; 0.5) Formex or just prefer Changeset’s validation.</p>
 <h1>Instalation</h1>
 <pre><code class="elixir">def deps do
   [{:formex_ecto, &quot;~&gt; 0.1.0&quot;}]
@@ -319,17 +317,19 @@ end</code></pre>
 
 <pre><code class="bash">MIX_ENV=test mix ecto.gen.migration migration_name -r Formex.Ecto.TestRepo</code></pre>
 <h1>Troubleshooting</h1>
-<h2 id="nil-insert-1-is-undefined-or-private-and-so-on-your-repo-is-nil" class="section-heading">
-  <a href="#nil-insert-1-is-undefined-or-private-and-so-on-your-repo-is-nil" class="hover-link"><span class="icon-link" aria-hidden="true"></span></a>
-  <code class="inline">nil.insert/1 is undefined or private</code> and so on (your Repo is <code class="inline">nil</code>)
+<h2 id="repo-is-nil" class="section-heading">
+  <a href="#repo-is-nil" class="hover-link"><span class="icon-link" aria-hidden="true"></span></a>
+  Repo is <code class="inline">nil</code>
 </h2>
 
-<p>It happens when you forgot about the <code class="inline">repo</code> option in the configuration, or you set it after module compilation. To recompile the whole package use: <code class="inline">mix deps.compile formex_ecto --force</code></p>
+<p>Do you have some weird “<code class="inline">nil.insert/1 is undefined or private</code>” error?</p>
+<p>It happens when you forgot about the <code class="inline">repo</code> option in the configuration or you set it after package compilation.
+To recompile the whole package use: <code class="inline">mix deps.compile formex_ecto --force</code></p>
 <h1>Docs</h1>
 <ul>
 <li><a href="https://hexdocs.pm/formex_ecto/Formex.Ecto.Controller.html">Controller</a> - controller helpers
 </li>
-<li><a href="https://hexdocs.pm/formex_ecto/Formex.Ecto.Type.html">Form Type</a> - changeset modification
+<li><a href="https://hexdocs.pm/formex_ecto/Formex.Ecto.Type.html">Form Type</a> - add your custom code to a changeset
 </li>
 <li><a href="https://hexdocs.pm/formex_ecto/Formex.Ecto.ChangesetValidator.html">Changeset validator adapter</a> -
   validation using Ecto.Changeset, adding errors to a changeset
@@ -342,6 +342,15 @@ end</code></pre>
 
 <ul>
 <li><a href="https://hexdocs.pm/formex_ecto/Formex.Ecto.CustomField.SelectAssoc.html">SelectAssoc</a>
+</li>
+</ul>
+<h2 id="guides" class="section-heading">
+  <a href="#guides" class="hover-link"><span class="icon-link" aria-hidden="true"></span></a>
+  Guides
+</h2>
+
+<ul>
+<li><a href="https://hexdocs.pm/formex_ecto/guides.html#uploading-files-with-arc-ecto">Uploading files with Arc.Ecto</a>
 </li>
 </ul>
 

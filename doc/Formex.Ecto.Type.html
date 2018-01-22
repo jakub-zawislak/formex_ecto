@@ -5,12 +5,10 @@
     <meta http-equiv="x-ua-compatible" content="ie=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="generator" content="ExDoc v0.16.1">
-    <title>Formex.Ecto.Type – formex_ecto v0.1.6</title>
+    <title>Formex.Ecto.Type – formex_ecto v0.1.7</title>
     <link rel="stylesheet" href="dist/app-4ecae1abb8.css" />
     
-      <link rel="canonical" href="https://hexdocs.pm/formex_ecto/Formex.Ecto.Type.html" />
-    
-    <script src="dist/sidebar_items-b8f3af0b39.js"></script>
+    <script src="dist/sidebar_items-359751927d.js"></script>
   </head>
   <body data-type="modules">
     <script>try { if(localStorage.getItem('night-mode')) document.body.className += ' night-mode'; } catch (e) { }</script>
@@ -29,7 +27,7 @@
         formex_ecto
       </h1>
       <h2 class="sidebar-projectVersion">
-        v0.1.6
+        v0.1.7
       </h2>
     </div>
     
@@ -63,7 +61,7 @@
 
 
       <h1>
-        <small class="visible-xs">formex_ecto v0.1.6</small>
+        <small class="visible-xs">formex_ecto v0.1.7</small>
         Formex.Ecto.Type <small>behaviour</small>
         
           <a href="https://github.com/jakub-zawislak/formex_ecto/blob/master/lib/type.ex#L1" title="View Source" class="view-source" rel="help">
@@ -89,13 +87,43 @@
     # ...
   end
 
+  # optional
+  def fields_casted_manually(_form) do
+    # do some fields will be casted later?
+    []
+  end
+
+  # optional
   def changeset_after_create_callback(changeset, form) do
-    # do something with changeset
-    # since Formex 0.5, you cannot add errors to changeset
+    # do something with changeset. If you change some data here, it will be saved to database
+    # since Formex 0.5, you cannot add errors to a changeset
     changeset
   end</code></pre>
-<p>If you want to add errors to changeset, see
+<p>If you want to add errors to a changeset, see
 <a href="Formex.Ecto.ChangesetValidator.html#c:changeset_validation/2"><code class="inline">Formex.Ecto.ChangesetValidator.changeset_validation/2</code></a></p>
+<h1>Example with <code class="inline">Arc.Ecto</code></h1>
+<pre><code class="elixir">defmodule App.ArticleType do
+  # ...
+
+  def build_form(form) do
+    form
+    |&gt; add(:image, :file_input, label: &quot;Image&quot;)
+    # ...
+  end
+
+  # `cast_attachments` from `Arc.Ecto` doesn&#39;t work if we used [`Ecto.Changeset.cast/4`](https://hexdocs.pm/ecto/2.1.4/Ecto.Changeset.html#cast/4) on `:image`
+  # (`Formex.Ecto.Changest` does this automatically), therefore we must indicate that this field
+  # will be casted manually
+  def fields_casted_manually(_form) do
+    [:image]
+  end
+
+  # manually use `Arc.Ecto.cast_attachment/3`
+  def changeset_after_create_callback(changeset, _form) do
+    changeset
+    |&gt; cast_attachments(changeset.params, [:image])
+  end
+end</code></pre>
 
         </section>
       
@@ -124,6 +152,15 @@
   </div>
   
     <div class="summary-synopsis"><p>Callback that will be called after changeset creation</p>
+</div>
+  
+</div>
+<div class="summary-row">
+  <div class="summary-signature">
+    <a href="#c:fields_casted_manually/1">fields_casted_manually(form)</a>
+  </div>
+  
+    <div class="summary-synopsis"><p>Do you have some fields that should be casted manually?</p>
 </div>
   
 </div>
@@ -156,7 +193,7 @@
     </a>
     <span class="signature">changeset_after_create_callback(changeset, form)</span>
     
-      <a href="https://github.com/jakub-zawislak/formex_ecto/blob/master/lib/type.ex#L54" class="view-source" rel="help" title="View Source">
+      <a href="https://github.com/jakub-zawislak/formex_ecto/blob/master/lib/type.ex#L92" class="view-source" rel="help" title="View Source">
        <span class="icon-code" aria-hidden="true"></span>
        <span class="sr-only">View Source</span>
      </a>
@@ -175,6 +212,37 @@
 <p>In this callback you can modify changeset.</p>
 <p>Since Formex 0.5, you cannot add errors to changeset. If you want to do so, see
 <a href="Formex.Ecto.ChangesetValidator.html#c:changeset_validation/2"><code class="inline">Formex.Ecto.ChangesetValidator.changeset_validation/2</code></a></p>
+
+  </section>
+</div>
+<div class="detail" id="c:fields_casted_manually/1">
+  
+  <div class="detail-header">
+    <a href="#c:fields_casted_manually/1" class="detail-link" title="Link to this callback">
+      <span class="icon-link" aria-hidden="true"></span>
+      <span class="sr-only">Link to this callback</span>
+    </a>
+    <span class="signature">fields_casted_manually(form)</span>
+    
+      <a href="https://github.com/jakub-zawislak/formex_ecto/blob/master/lib/type.ex#L102" class="view-source" rel="help" title="View Source">
+       <span class="icon-code" aria-hidden="true"></span>
+       <span class="sr-only">View Source</span>
+     </a>
+    
+    
+    
+      <div class="specs">
+        
+          <pre>fields_casted_manually(form :: <a href="https://hexdocs.pm/formex/0.5.9/Formex.Form.html#t:t/0">Formex.Form.t</a>) :: <a href="https://hexdocs.pm/elixir/List.html#t:t/0">List.t</a></pre>
+        
+      </div>
+    
+  </div>
+  <section class="docstring">
+    <p>Do you have some fields that should be casted manually?</p>
+<p>All fields listed here will not be
+casted automatically by <a href="https://hexdocs.pm/ecto/2.1.4/Ecto.Changeset.html#cast/3"><code class="inline">Ecto.Changeset.cast/3</code></a> function. You must cast them in the
+<a href="#c:changeset_after_create_callback/2"><code class="inline">changeset_after_create_callback/2</code></a>.</p>
 
   </section>
 </div>

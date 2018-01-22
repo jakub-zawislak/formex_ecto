@@ -3,7 +3,7 @@ defmodule Formex.Ecto.Mixfile do
 
   def project do
     [app: :formex_ecto,
-     version: "0.1.6",
+     version: "0.1.7",
      elixir: "~> 1.3",
      build_embedded: Mix.env == :prod,
      start_permanent: Mix.env == :prod,
@@ -11,7 +11,7 @@ defmodule Formex.Ecto.Mixfile do
      package: package(),
      description: description(),
      docs: [main: "readme",
-          extras: ["README.md"]],
+          extras: ["README.md", "guides.md"]],
      source_url: "https://github.com/jakub-zawislak/formex_ecto",
      elixirc_paths: elixirc_paths(Mix.env),
      aliases: aliases()

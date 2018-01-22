@@ -9,7 +9,7 @@ defmodule Formex.Ecto.Changeset do
   @spec create_changeset(form :: Form.t) :: Form.t
   def create_changeset(form) do
     form.struct
-    |> cast(form.mapped_params, get_normal_fields_names(form))
+    |> cast(form.mapped_params, get_fields_to_cast(form))
     |> cast_multiple_selects(form)
     |> cast_embedded_forms(form)
     |> form.type.changeset_after_create_callback(form)
@@ -18,16 +18,21 @@ defmodule Formex.Ecto.Changeset do
   @spec create_changeset_without_embedded(form :: Form.t) :: Form.t
   def create_changeset_without_embedded(form) do
     form.struct
-    |> cast(form.mapped_params, get_normal_fields_names(form))
+    |> cast(form.mapped_params, get_fields_to_cast(form))
     |> cast_multiple_selects(form)
     |> form.type.changeset_after_create_callback(form)
   end
 
   #
 
-  defp get_normal_fields_names(form) do
-    Form.get_fields(form)
+  @spec get_fields_to_cast(form :: Form.t) :: List.t
+  defp get_fields_to_cast(form) do
+    fields_casted_manually = form.type.fields_casted_manually(form)
+
+    form
+    |> Form.get_fields()
     |> filter_normal_fields(form)
+    |> Enum.filter(fn field -> field.name not in fields_casted_manually end)
     |> Enum.map(&(&1.struct_name))
   end
 
