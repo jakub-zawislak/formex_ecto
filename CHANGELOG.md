@@ -1,3 +1,9 @@
+## v0.1.9 (2018-04-01)
+* Fixed using `multiple_select` with array field
+
+## v0.1.8 (2018-01-23)
+* Fixed package requirements
+
 ## v0.1.7 (2018-01-22)
 * Added ability to control which fields will be casted via `Ecto.Changeset.cast/3`.
   It was required by packages like `Arc.Ecto`.

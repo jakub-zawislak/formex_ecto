@@ -5,6 +5,7 @@ defmodule Formex.Ecto.TestModel.User do
     field :first_name, :string
     field :last_name, :string
     field :age, :integer
+    field :degrees, {:array, :string}
 
     belongs_to :department, Formex.Ecto.TestModel.Department
     belongs_to :user_info, Formex.Ecto.TestModel.UserInfo
