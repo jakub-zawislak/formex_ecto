@@ -49,18 +49,19 @@ defmodule Formex.Ecto.Changeset do
     Form.get_fields(form)
     |> Enum.filter(&(&1.type == :multiple_select))
     |> Enum.reduce(changeset, fn field, changeset ->
-     case form.struct_module.__schema__(:association, field.name) do
-        nil -> changeset
+      case form.struct_module.__schema__(:association, field.name) do
+        nil ->
+          changeset
         module ->
-          ids    = form.mapped_params[to_string(field.name)] || []
-          associated =  module.related
+          ids = form.mapped_params[to_string(field.name)] || []
+
+          associated = module.related
           |> where([c], c.id in ^ids)
           |> @repo.all
           |> Enum.map(&Ecto.Changeset.change/1)
 
           changeset
           |> put_assoc(field.name, associated)
-
       end
     end)
   end
