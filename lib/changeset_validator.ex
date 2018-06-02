@@ -97,10 +97,10 @@ defmodule Formex.Ecto.ChangesetValidator do
 
   @spec validate(Form.t) :: Form.t
   def validate(form) do
-    # should be used `create_changeset` for collections validation
-    # anyway, `length` doesn't validate empty collections
+    # the `create_changeset_for_validation` creates changeset without collections
+    # `length` doesn't validate empty collections so we don't need them
 
-    changeset = Formex.Ecto.Changeset.create_changeset_without_embedded(form)
+    changeset = Formex.Ecto.Changeset.create_changeset_for_validation(form)
 
     errors_fields = form
     |> Form.get_fields_validatable

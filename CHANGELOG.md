@@ -1,3 +1,8 @@
+## v0.1.10 (2018-06-02)
+* The Changeset Validator was using `changeset_after_create_callback` although this callback was
+  made to change normal changeset, not the fake one that creates this validator. Now this callback
+  is not firing while performing validation.
+
 ## v0.1.9 (2018-04-01)
 * Fixed using `multiple_select` with array field
 
