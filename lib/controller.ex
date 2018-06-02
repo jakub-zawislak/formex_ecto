@@ -1,6 +1,7 @@
 defmodule Formex.Ecto.Controller do
   alias Formex.Form
   alias Formex.Builder
+  import Formex.Ecto.Validator
   import Formex.Ecto.Changeset
   @repo Application.get_env(:formex, :repo)
 
@@ -87,7 +88,7 @@ defmodule Formex.Ecto.Controller do
       |> @repo.insert
       |> case do
         {:error, changeset} ->
-          raise_changeset_error(form, changeset)
+          handle_changeset_error(form, changeset)
         {:ok, struct} -> {:ok, struct}
       end
     else
@@ -108,7 +109,7 @@ defmodule Formex.Ecto.Controller do
       |> @repo.update
       |> case do
         {:error, changeset} ->
-          raise_changeset_error(form, changeset)
+          handle_changeset_error(form, changeset)
         {:ok, struct} -> {:ok, struct}
       end
     else
@@ -116,19 +117,8 @@ defmodule Formex.Ecto.Controller do
     end
   end
 
-  defp raise_changeset_error(form, changeset) do
-    errors = Ecto.Changeset.traverse_errors(changeset, fn {msg, opts} ->
-      Enum.reduce(opts, msg, fn {key, value}, acc ->
-        String.replace(acc, "%{#{key}}", to_string(value))
-      end)
-    end)
-
-    if errors != %{} do
-      raise "Your changeset has errors. Since Formex 0.5, errors added in
-      `Type.changeset_after_create_callback` are not being validated. You have to use
-      new validator functionality. Errors found:\n
-      "<>inspect(errors)
-    end
+  defp handle_changeset_error(form, changeset) do
+    form = assign_changeset_errors(form, changeset)
 
     {:error, %{form | submitted?: true}}
   end

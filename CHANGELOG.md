@@ -1,3 +1,8 @@
+## v0.2.0 (2018-06-02)
+* Return of Changeset validation that was in formex < 0.5. Read more in UPGRADE.md
+* Renamed callback `changeset_after_create_callback` to `modify_changeset`
+* Removed `changeset_validation` callback - rules should be moved to `modify_changeset`
+
 ## v0.1.10 (2018-06-02)
 * The Changeset Validator was using `changeset_after_create_callback` although this callback was
   made to change normal changeset, not the fake one that creates this validator. Now this callback

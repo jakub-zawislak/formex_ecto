@@ -12,7 +12,7 @@ defmodule Formex.Ecto.Changeset do
     |> cast(form.mapped_params, get_fields_to_cast(form))
     |> cast_multiple_selects(form)
     |> cast_embedded_forms(form)
-    |> form.type.changeset_after_create_callback(form)
+    |> form.type.modify_changeset(form)
   end
 
   @spec create_changeset_for_validation(form :: Form.t) :: Form.t

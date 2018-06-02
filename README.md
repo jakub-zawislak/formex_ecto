@@ -2,14 +2,14 @@
 
 Library that integrates Ecto with [Formex](https://github.com/jakub-zawislak/formex).
 
-It also has an Ecto.Changeset validator adapter for those who want to easily migrate a project
-from old (< 0.5) Formex or just prefer Changeset's validation.
+It also has an Ecto.Changeset validator adapter for those who wants to use validation functions
+from Ecto.Changeset.
 
 # Instalation
 
 ```elixir
 def deps do
-  [{:formex_ecto, "~> 0.1.0"}]
+  [{:formex_ecto, "~> 0.2.0"}]
 end
 ```
 
@@ -220,7 +220,7 @@ You don't need to pass `:method` option, it's set basing on `struct.id` value.
 
 # Changeset modification
 
-There is a callback `changeset_after_create_callback`. Examples:
+There is a callback `modify_changeset`. Examples:
 
 ## Add something to an user during registration
 
@@ -235,7 +235,7 @@ def build_form(form) do
 end
 
 # Put additional changes that will be saved to database.
-def changeset_after_create_callback(changeset, _form) do
+def modify_changeset(changeset, _form) do
   changeset
   |> User.put_pass_hash
 end
@@ -270,7 +270,7 @@ def build_form(form) do
   #
 end
 
-def changeset_after_create_callback(changeset, form) do
+def modify_changeset(changeset, form) do
   # check if it's a create action
   if !form.struct.id do
     changeset
@@ -280,11 +280,6 @@ def changeset_after_create_callback(changeset, form) do
   end
 end
 ```
-
-## Limitations
-
-Don't use validation inside this callback - use `changeset_validation/2` from
-`Formex.Ecto.ChangesetValidator` instead
 
 # Tests
 

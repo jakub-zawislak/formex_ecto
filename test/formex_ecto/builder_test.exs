@@ -1,13 +1,18 @@
 defmodule Formex.Ecto.BuilderTestType do
   use Formex.Type
   use Formex.Ecto.Type
+  import Ecto.Changeset
 
   def build_form(form) do
     form
     |> add(:title, :text_input)
     |> add(:content, :textarea)
-    |> add(:visible, :checkbox, required: false)
     |> add(:save, :submit)
+  end
+
+  def modify_changeset(changeset, _form) do
+    changeset
+    |> validate_length(:title, min: 3)
   end
 end
 
@@ -29,7 +34,10 @@ defmodule Formex.BuilderTest do
     params = %{"title" => "twoja", "content" => "stara"}
     form = create_form(BuilderTestType, %Article{}, params)
 
-    {:ok, _} = insert_form_data(form)
+    {:ok, item} = insert_form_data(form)
+
+    assert item.title == "twoja"
+    assert item.content == "stara"
   end
 
   test "database update" do
@@ -39,6 +47,18 @@ defmodule Formex.BuilderTest do
     params = %{"content" => "cebula"}
     form = create_form(BuilderTestType, article, params)
 
-    {:ok, _} = update_form_data(form)
+    {:ok, item} = update_form_data(form)
+
+    assert item.content == "cebula"
+  end
+
+  test "changeset error" do
+
+    article = TestRepo.insert!(%Article{title: "asd", content: "szynka"})
+
+    params = %{"title" => "as", "content" => "szynka"}
+    form = create_form(BuilderTestType, article, params)
+
+    {:error, form} = update_form_data(form)
   end
 end

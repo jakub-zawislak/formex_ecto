@@ -3,7 +3,7 @@ defmodule Formex.Ecto.Mixfile do
 
   def project do
     [app: :formex_ecto,
-     version: "0.1.10",
+     version: "0.2.0",
      elixir: "~> 1.3",
      build_embedded: Mix.env == :prod,
      start_permanent: Mix.env == :prod,
@@ -32,7 +32,7 @@ defmodule Formex.Ecto.Mixfile do
     ]
 
     if !System.get_env("FORMEX_DEV") do
-      deps ++ [{:formex, ">= 0.6.5 and < 0.7.0"}]
+      deps ++ [{:formex, ">= 0.6.6 and < 0.7.0"}]
       # deps ++ [{:formex, path: "../formex"}] # for tests with formex debugging
     else
       deps

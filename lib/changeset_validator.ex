@@ -5,15 +5,15 @@ defmodule Formex.Ecto.ChangesetValidator do
   alias Ecto.Changeset
 
   @moduledoc """
-  Changeset validator adapter for Formex
+  Changeset validator adapter for Formex.
 
-  # Why?
+  It was created to make use of validation functions included in `Ecto.Changeset`. This module
+  creates a fake changeset to perform validation rules.
 
-  Validators was introduced in Formex 0.5, in older versions validation was perfomred via
-  Changesets. So if you already have a project with older Formex, you would have to rewrite all
-  validations. But you can also use this validator instead.
-
-  Anyway, you can use any validator with any forms that uses Ecto.
+  You don't need to use this validator - any
+  [validator](https://hexdocs.pm/formex/Formex.Validator.html) works with Ecto schemas.
+  You can also add errors in the `c:Formex.Ecto.modify_changeset/2` callback, which modifies real
+  changeset.
 
   # Limitations
 
@@ -33,8 +33,6 @@ defmodule Formex.Ecto.ChangesetValidator do
     use Formex.Ecto.Type
     use Formex.Ecto.ChangesetValidator # <- add this
   ```
-
-  ## Inside the build_form
 
   ```
   def build_form(form) do
@@ -60,38 +58,11 @@ defmodule Formex.Ecto.ChangesetValidator do
   (e.g. `Ecto.Changeset.validate_format/4` needs format as third argument)
   it must be passed as `:arg` option.
 
-  ## Outside the build_form
-
-  There is `c:changeset_validation/2` callback where is passed changeset struct as argument.
-  You can use `Ecto.Changeset.add_error/4` to add errors to fields that exists in that form.
-
-  You cannot alter data from here. This changeset is used only to pass errors. If you want to
-  modify changeset, use `c:Formex.Ecto.Type.changeset_after_create_callback/2` instead
-
-  ```
-  def build_form(form) do
-    form
-    |> add(:username, :text_input)
-    # ...
-  end
-
-  def changeset_validation(changeset, _form) do
-    add_error(:username, "error message")
-  end
-  ```
-
   """
 
   defmacro __using__([]) do
     quote do
-      @behaviour Formex.Ecto.ChangesetValidator
       import Ecto.Changeset
-
-      def changeset_validation(changeset, _form) do
-        changeset
-      end
-
-      defoverridable [changeset_validation: 2]
     end
   end
 
@@ -108,9 +79,7 @@ defmodule Formex.Ecto.ChangesetValidator do
       validate_field(changeset, item)
     end)
 
-    errors_changeset = form.type.changeset_validation(changeset, form).errors
-
-    errors = errors_fields ++ errors_changeset
+    errors = errors_fields
     |> Enum.reduce([], fn ({key, val}, acc) ->
       Keyword.update(acc, key, [val], &([val|&1]))
     end)
@@ -144,7 +113,5 @@ defmodule Formex.Ecto.ChangesetValidator do
     end)
     |> Map.get(:errors)
   end
-
-  @callback changeset_validation(changeset :: Changeset.t, form :: Form.t) :: Form.t
 
 end

@@ -26,15 +26,12 @@ defmodule Formex.Ecto.Type do
     end
 
     # optional
-    def changeset_after_create_callback(changeset, form) do
-      # do something with changeset. If you change some data here, it will be saved to database
-      # since Formex 0.5, you cannot add errors to a changeset
+    def modify_changeset(changeset, form) do
+      # Modify changeset. If you change some data here, it will be saved to database
+      # You can also add validation rules here
       changeset
     end
   ```
-
-  If you want to add errors to a changeset, see
-  `c:Formex.Ecto.ChangesetValidator.changeset_validation/2`
 
   # Example with `Arc.Ecto`
 
@@ -56,20 +53,19 @@ defmodule Formex.Ecto.Type do
     end
 
     # manually use `Arc.Ecto.cast_attachment/3`
-    def changeset_after_create_callback(changeset, _form) do
+    def modify_changeset(changeset, _form) do
       changeset
       |> cast_attachments(changeset.params, [:image])
     end
   end
   ```
-
   """
 
   defmacro __using__([]) do
     quote do
       @behaviour Formex.Ecto.Type
 
-      def changeset_after_create_callback(changeset, _form) do
+      def modify_changeset(changeset, _form) do
         changeset
       end
 
@@ -77,7 +73,7 @@ defmodule Formex.Ecto.Type do
         []
       end
 
-      defoverridable [changeset_after_create_callback: 2, fields_casted_manually: 1]
+      defoverridable [modify_changeset: 2, fields_casted_manually: 1]
     end
   end
 
@@ -86,10 +82,11 @@ defmodule Formex.Ecto.Type do
 
   In this callback you can modify changeset.
 
-  Since Formex 0.5, you cannot add errors to changeset. If you want to do so, see
-  `c:Formex.Ecto.ChangesetValidator.changeset_validation/2`
+  Any errors added here will not be displayed together with errors added normally, i.e. using
+  `Formex.Validator`. Insert/update actions are performed only when Formex.Validator validation
+  passes. Errors from changeset are added to form after insert/update failure.
   """
-  @callback changeset_after_create_callback(changeset :: Ecto.Changeset.t, form :: Formex.Form.t)
+  @callback modify_changeset(changeset :: Ecto.Changeset.t, form :: Formex.Form.t)
     :: Ecto.Changeset.t
 
   @doc """
@@ -97,7 +94,7 @@ defmodule Formex.Ecto.Type do
 
   All fields listed here will not be
   casted automatically by `Ecto.Changeset.cast/3` function. You must cast them in the
-  `c:changeset_after_create_callback/2`.
+  `c:modify_changeset/2`.
   """
   @callback fields_casted_manually(form :: Formex.Form.t) :: List.t
 
