@@ -1,6 +1,6 @@
 # Upgrade from 0.1 to 0.2
 
-  ## TLDR;
+  ## TL;DR
 
   * Rename `changeset_after_create_callback` to `modify_changeset`
   * Move your validation rules from `changeset_validation` to `modify_changeset`

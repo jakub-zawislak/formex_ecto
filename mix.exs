@@ -11,7 +11,7 @@ defmodule Formex.Ecto.Mixfile do
      package: package(),
      description: description(),
      docs: [main: "readme",
-          extras: ["README.md", "guides.md"]],
+          extras: ["README.md", "UPGRADE.md", "guides.md"]],
      source_url: "https://github.com/jakub-zawislak/formex_ecto",
      elixirc_paths: elixirc_paths(Mix.env),
      aliases: aliases()
