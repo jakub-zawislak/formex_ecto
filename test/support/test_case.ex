@@ -9,6 +9,6 @@ defmodule Formex.Ecto.TestCase do
 
     # The :shared mode allows a process to share
     # its connection with any other process automatically
-    Ecto.Adapters.SQL.Sandbox.mode(TestRepo, { :shared, self() })
+    Ecto.Adapters.SQL.Sandbox.mode(TestRepo, {:shared, self()})
   end
 end

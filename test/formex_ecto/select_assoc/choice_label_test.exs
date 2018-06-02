@@ -5,8 +5,12 @@ defmodule Formex.Ecto.SelectAssocChoiceLabelAtomTestType do
 
   def build_form(form) do
     form
-    |> add(:category_id, Formex.Ecto.CustomField.SelectAssoc, choice_label: :id,
-    validation: [:required])
+    |> add(
+      :category_id,
+      Formex.Ecto.CustomField.SelectAssoc,
+      choice_label: :id,
+      validation: [:required]
+    )
   end
 end
 
@@ -17,9 +21,14 @@ defmodule Formex.Ecto.SelectAssocChoiceLabelFunctionTestType do
 
   def build_form(form) do
     form
-    |> add(:category_id, Formex.Ecto.CustomField.SelectAssoc, choice_label: fn category ->
-      category.name <> category.name
-    end, validation: [:required])
+    |> add(
+      :category_id,
+      Formex.Ecto.CustomField.SelectAssoc,
+      choice_label: fn category ->
+        category.name <> category.name
+      end,
+      validation: [:required]
+    )
   end
 end
 
@@ -34,7 +43,7 @@ defmodule Formex.Ecto.SelectAssoc.ChoiceLabelTest do
     form = create_form(SelectAssocChoiceLabelAtomTestType, %Article{})
 
     choices = Enum.at(form.items, 0).data[:choices]
-    choice  = Enum.at(choices, 0)
+    choice = Enum.at(choices, 0)
     {choice_label, _} = choice
     assert is_number(choice_label)
   end
@@ -45,9 +54,8 @@ defmodule Formex.Ecto.SelectAssoc.ChoiceLabelTest do
     form = create_form(SelectAssocChoiceLabelFunctionTestType, %Article{})
 
     choices = Enum.at(form.items, 0).data[:choices]
-    choice  = Enum.at(choices, 0)
+    choice = Enum.at(choices, 0)
     {choice_label, _} = choice
     assert choice_label == "ElixirElixir"
   end
-
 end

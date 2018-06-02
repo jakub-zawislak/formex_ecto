@@ -133,38 +133,43 @@ defmodule Formex.Ecto.CustomField.SelectAssoc do
   end
   ```
   """
-  @spec search(form :: Form.t, name :: atom, search :: String.t) :: List.t
+  @spec search(form :: Form.t(), name :: atom, search :: String.t()) :: List.t()
   def search(form, name, search) do
-    name_id = Regex.replace(~r/_id$/, Atom.to_string(name), "")
-    |> String.to_atom
+    name_id =
+      Regex.replace(~r/_id$/, Atom.to_string(name), "")
+      |> String.to_atom()
 
-    search = "%"<>search<>"%"
+    search = "%" <> search <> "%"
 
-    module  = form.struct_module.__schema__(:association, name_id).related
+    module = form.struct_module.__schema__(:association, name_id).related
 
     form_field = Form.find(form, name)
     opts = form_field.opts
 
-    query = if opts[:search_query] do
-      opts[:search_query].(module, search)
-
-    else
-      search_field = case opts[:search_field] do
-        x when is_atom(x) and not is_nil(x) ->
-          x
-        _ ->
-          case opts[:choice_label] do
+    query =
+      if opts[:search_query] do
+        opts[:search_query].(module, search)
+      else
+        search_field =
+          case opts[:search_field] do
             x when is_atom(x) and not is_nil(x) ->
               x
-            x when is_nil(x) ->
-              :name
-            x when is_function(x) ->
-              raise "Provide a value for :search_field option in #{name} field"
-          end
-      end
 
-      from(e in module, where: like(field(e, ^search_field), ^search) )
-    end
+            _ ->
+              case opts[:choice_label] do
+                x when is_atom(x) and not is_nil(x) ->
+                  x
+
+                x when is_nil(x) ->
+                  :name
+
+                x when is_function(x) ->
+                  raise "Provide a value for :search_field option in #{name} field"
+              end
+          end
+
+        from(e in module, where: like(field(e, ^search_field), ^search))
+      end
 
     query
     |> apply_query(opts[:query])
@@ -174,14 +179,16 @@ defmodule Formex.Ecto.CustomField.SelectAssoc do
   end
 
   defp create_field_single(form, name_id, opts) do
-    name = Regex.replace(~r/_id$/, Atom.to_string(name_id), "")
-    |> String.to_atom
+    name =
+      Regex.replace(~r/_id$/, Atom.to_string(name_id), "")
+      |> String.to_atom()
 
     module = form.struct_module.__schema__(:association, name).related
 
-    opts = opts
-    |> parse_opts(module)
-    |> put_choices(module)
+    opts =
+      opts
+      |> parse_opts(module)
+      |> put_choices(module)
 
     Field.create_field(:select, name_id, opts)
   end
@@ -189,22 +196,22 @@ defmodule Formex.Ecto.CustomField.SelectAssoc do
   defp create_field_multiple(form, name, opts) do
     module = form.struct_module.__schema__(:association, name).related
 
-    opts = opts
-    |> parse_opts(module)
-    |> put_choices(module)
+    opts =
+      opts
+      |> parse_opts(module)
+      |> put_choices(module)
 
-    selected = if form.struct.id do
-      form.struct
-      |> @repo.preload(name)
-      |> Map.get(name)
-      |> Enum.map(&(&1.id))
-    else
-      []
-    end
+    selected =
+      if form.struct.id do
+        form.struct
+        |> @repo.preload(name)
+        |> Map.get(name)
+        |> Enum.map(& &1.id)
+      else
+        []
+      end
 
-    phoenix_opts = Keyword.merge(opts[:phoenix_opts] || [], [
-      selected: selected
-    ])
+    phoenix_opts = Keyword.merge(opts[:phoenix_opts] || [], selected: selected)
 
     opts = Keyword.merge(opts, phoenix_opts: phoenix_opts)
 
@@ -213,47 +220,48 @@ defmodule Formex.Ecto.CustomField.SelectAssoc do
 
   defp put_choices(opts, module) do
     if !opts[:without_choices] do
-      choices = module
-      |> apply_query(opts[:query])
-      |> apply_group_by_assoc(opts[:group_by])
-      |> @repo.all
-      |> group_rows(opts[:group_by])
-      |> generate_choices(opts[:choice_label])
-
-      Keyword.put(opts, :choices, choices)
-
-    else
-      Keyword.put(opts, :choice_label_provider, fn id ->
-
-        row = from(e in module, where: e.id == ^id)
+      choices =
+        module
         |> apply_query(opts[:query])
         |> apply_group_by_assoc(opts[:group_by])
-        |> @repo.one
+        |> @repo.all
+        |> group_rows(opts[:group_by])
+        |> generate_choices(opts[:choice_label])
+
+      Keyword.put(opts, :choices, choices)
+    else
+      Keyword.put(opts, :choice_label_provider, fn id ->
+        row =
+          from(e in module, where: e.id == ^id)
+          |> apply_query(opts[:query])
+          |> apply_group_by_assoc(opts[:group_by])
+          |> @repo.one
 
         if row do
           get_choice_label_val(row, opts[:choice_label])
         else
           nil
         end
-
       end)
     end
   end
 
   defp parse_opts(opts, module) do
     opts
-    |> Keyword.update(:group_by, nil, fn(property_path) ->
-
+    |> Keyword.update(:group_by, nil, fn property_path ->
       cond do
-        is_list(property_path) -> property_path
+        is_list(property_path) ->
+          property_path
+
         is_atom(property_path) ->
           cond do
             module.__schema__(:association, property_path) -> [property_path, :name]
             true -> [property_path]
           end
-        true -> nil
-      end
 
+        true ->
+          nil
+      end
     end)
   end
 
@@ -261,9 +269,11 @@ defmodule Formex.Ecto.CustomField.SelectAssoc do
     custom_query.(query)
   end
 
-  defp apply_query(query, _) do query end
+  defp apply_query(query, _) do
+    query
+  end
 
-  defp apply_group_by_assoc(query, [assoc|t]) do
+  defp apply_group_by_assoc(query, [assoc | t]) do
     if Enum.count(t) > 0 do
       from(query, preload: [^assoc])
     else
@@ -271,14 +281,18 @@ defmodule Formex.Ecto.CustomField.SelectAssoc do
     end
   end
 
-  defp apply_group_by_assoc(query, _) do query end
+  defp apply_group_by_assoc(query, _) do
+    query
+  end
 
   defp group_rows(rows, property_path) when is_list(property_path) do
     rows
-    |> Enum.group_by(&(Formex.Utils.Map.get_property(&1, property_path)))
+    |> Enum.group_by(&Formex.Utils.Map.get_property(&1, property_path))
   end
 
-  defp group_rows(rows, _) do rows end
+  defp group_rows(rows, _) do
+    rows
+  end
 
   defp generate_choices(rows, choice_label) when is_list(rows) do
     rows
@@ -297,25 +311,26 @@ defmodule Formex.Ecto.CustomField.SelectAssoc do
     |> Enum.map(fn {group_label, rows} ->
       {group_label, generate_choices(rows, choice_label)}
     end)
-    |> Map.new(&(&1))
+    |> Map.new(& &1)
   end
 
   defp get_choice_label_val(row, choice_label) do
     cond do
       is_function(choice_label) ->
         choice_label.(row)
+
       !is_nil(choice_label) ->
         Map.get(row, choice_label)
+
       true ->
-        if Map.has_key? row, :name do
+        if Map.has_key?(row, :name) do
           row.name
         else
-          throw """
-            Field :name not found in the schema.
-            You should provide the :choice_label value in SelectAssoc
-            """
+          throw("""
+          Field :name not found in the schema.
+          You should provide the :choice_label value in SelectAssoc
+          """)
         end
     end
   end
-
 end

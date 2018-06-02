@@ -27,17 +27,28 @@ defmodule Formex.Ecto.SelectAssocCase do
         dep2 = TestRepo.insert!(%Department{name: "Sales"})
         dep3 = TestRepo.insert!(%Department{name: "Accounting"})
 
-        TestRepo.insert(%User{department_id: dep3.id, first_name: "Grażyna", last_name: "Kowalska"})
+        TestRepo.insert(%User{
+          department_id: dep3.id,
+          first_name: "Grażyna",
+          last_name: "Kowalska"
+        })
+
         TestRepo.insert(%User{department_id: dep1.id, first_name: "Wiesio", last_name: "Nowak"})
-        TestRepo.insert(%User{department_id: dep3.id, first_name: "Krystyna", last_name: "Pawłowicz"})
+
+        TestRepo.insert(%User{
+          department_id: dep3.id,
+          first_name: "Krystyna",
+          last_name: "Pawłowicz"
+        })
+
         TestRepo.insert(%User{department_id: dep1.id, first_name: "Jan", last_name: "Cebula"})
         TestRepo.insert(%User{department_id: dep2.id, first_name: "Przemek", last_name: "Cebula"})
       end
 
       def get_category(key) do
         Category
-        |> Category.ordered
-        |> TestRepo.all
+        |> Category.ordered()
+        |> TestRepo.all()
         |> Enum.at(key)
       end
     end

@@ -4,11 +4,15 @@ defmodule Formex.Ecto.MultipleSelect.ArrayTestType do
 
   def build_form(form) do
     form
-    |> add(:degrees, :multiple_select, choices: [
-      "Bachelor",
-      "Master",
-      "Doctor",
-    ])
+    |> add(
+      :degrees,
+      :multiple_select,
+      choices: [
+        "Bachelor",
+        "Master",
+        "Doctor"
+      ]
+    )
   end
 end
 
@@ -34,5 +38,4 @@ defmodule Formex.Ecto.MultipleSelect.ArrayTest do
 
     assert user.degrees == ["Master", "Doctor"]
   end
-
 end

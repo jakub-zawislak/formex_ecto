@@ -30,9 +30,10 @@ defmodule Formex.Ecto.Embedded.CollectionTest do
   test "view" do
     form = create_form(UserType, %User{first_name: "Bożątko"})
 
-    {:safe, form_html} = Formex.View.formex_form_for(form, "", fn f ->
-      Formex.View.formex_rows(f)
-    end)
+    {:safe, form_html} =
+      Formex.View.formex_form_for(form, "", fn f ->
+        Formex.View.formex_rows(f)
+      end)
 
     form_str = form_html |> to_string
 
@@ -42,20 +43,30 @@ defmodule Formex.Ecto.Embedded.CollectionTest do
   end
 
   test "insert user and user_address" do
-    params      = %{"first_name" => "a", "last_name" => "a"}
-    form        = create_form(UserType, %User{}, params)
-    {:ok,    _} = handle_form(form)
+    params = %{"first_name" => "a", "last_name" => "a"}
+    form = create_form(UserType, %User{}, params)
+    {:ok, _} = handle_form(form)
 
-    params      = %{"first_name" => "a", "last_name" => "a", "user_addresses" => %{
-      "0" => %{"street" => ""}
-    }}
-    form        = create_form(UserType, %User{}, params)
+    params = %{
+      "first_name" => "a",
+      "last_name" => "a",
+      "user_addresses" => %{
+        "0" => %{"street" => ""}
+      }
+    }
+
+    form = create_form(UserType, %User{}, params)
     {:error, _} = handle_form(form)
 
-    params      = %{"first_name" => "a", "last_name" => "a", "user_addresses" => %{
-      "0" => %{"street" => "s", "postal_code" => "p", "city" => "c"}
-    }}
-    form        = create_form(UserType, %User{}, params)
+    params = %{
+      "first_name" => "a",
+      "last_name" => "a",
+      "user_addresses" => %{
+        "0" => %{"street" => "s", "postal_code" => "p", "city" => "c"}
+      }
+    }
+
+    form = create_form(UserType, %User{}, params)
     {:ok, user} = handle_form(form)
 
     assert user.first_name == "a"

@@ -19,8 +19,12 @@ defmodule Formex.Ecto.SelectAssoc.Search.SearchFieldType do
 
   def build_form(form) do
     form
-    |> add(:user_id, SelectAssoc, choice_label: &(&1.first_name<>&1.last_name),
-      search_field: :first_name)
+    |> add(
+      :user_id,
+      SelectAssoc,
+      choice_label: &(&1.first_name <> &1.last_name),
+      search_field: :first_name
+    )
   end
 end
 
@@ -33,10 +37,14 @@ defmodule Formex.Ecto.SelectAssoc.Search.SearchQueryType do
 
   def build_form(form) do
     form
-    |> add(:user_id, SelectAssoc, choice_label: :first_name, search_query: fn query, search ->
-      from e in query,
-        where: like(e.last_name, ^search)
-    end)
+    |> add(
+      :user_id,
+      SelectAssoc,
+      choice_label: :first_name,
+      search_query: fn query, search ->
+        from(e in query, where: like(e.last_name, ^search))
+      end
+    )
   end
 end
 
@@ -94,5 +102,4 @@ defmodule Formex.Ecto.SelectAssoc.SearchTest do
     assert Enum.at(choices, 0) |> elem(0) == "Jan"
     assert Enum.at(choices, 1) |> elem(0) == "Przemek"
   end
-
 end

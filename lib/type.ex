@@ -73,7 +73,7 @@ defmodule Formex.Ecto.Type do
         []
       end
 
-      defoverridable [modify_changeset: 2, fields_casted_manually: 1]
+      defoverridable modify_changeset: 2, fields_casted_manually: 1
     end
   end
 
@@ -86,8 +86,8 @@ defmodule Formex.Ecto.Type do
   `Formex.Validator`. Insert/update actions are performed only when Formex.Validator validation
   passes. Errors from changeset are added to form after insert/update failure.
   """
-  @callback modify_changeset(changeset :: Ecto.Changeset.t, form :: Formex.Form.t)
-    :: Ecto.Changeset.t
+  @callback modify_changeset(changeset :: Ecto.Changeset.t(), form :: Formex.Form.t()) ::
+              Ecto.Changeset.t()
 
   @doc """
   Do you have some fields that should be casted manually?
@@ -96,6 +96,5 @@ defmodule Formex.Ecto.Type do
   casted automatically by `Ecto.Changeset.cast/3` function. You must cast them in the
   `c:modify_changeset/2`.
   """
-  @callback fields_casted_manually(form :: Formex.Form.t) :: List.t
-
+  @callback fields_casted_manually(form :: Formex.Form.t()) :: List.t()
 end

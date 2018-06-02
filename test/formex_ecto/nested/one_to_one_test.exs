@@ -31,9 +31,10 @@ defmodule Formex.Ecto.Nested.OneToOneTest do
 
     form = create_form(UserType, %User{})
 
-    {:safe, form_html} = Formex.View.formex_form_for(form, "", fn f ->
-      Formex.View.formex_rows(f)
-    end)
+    {:safe, form_html} =
+      Formex.View.formex_form_for(form, "", fn f ->
+        Formex.View.formex_rows(f)
+      end)
 
     form_str = form_html |> to_string
 
@@ -42,12 +43,12 @@ defmodule Formex.Ecto.Nested.OneToOneTest do
   end
 
   test "insert user and user_info" do
-    params      = %{"first_name" => "a", "last_name" => "a", "user_info" => %{"section" => ""}}
-    form        = create_form(UserType, %User{}, params)
+    params = %{"first_name" => "a", "last_name" => "a", "user_info" => %{"section" => ""}}
+    form = create_form(UserType, %User{}, params)
     {:error, _} = insert_form_data(form)
 
-    params      = %{"first_name" => "a", "last_name" => "a", "user_info" => %{"section" => "s"}}
-    form        = create_form(UserType, %User{}, params)
+    params = %{"first_name" => "a", "last_name" => "a", "user_info" => %{"section" => "s"}}
+    form = create_form(UserType, %User{}, params)
     {:ok, user} = insert_form_data(form)
 
     assert user.user_info.section == "s"
@@ -58,18 +59,24 @@ defmodule Formex.Ecto.Nested.OneToOneTest do
 
     user = get_first_user()
 
-    params      = %{"first_name" => "a", "last_name" => "a", "user_info" => %{"section" => ""}}
-    form        = create_form(UserType, user, params)
+    params = %{"first_name" => "a", "last_name" => "a", "user_info" => %{"section" => ""}}
+    form = create_form(UserType, user, params)
     {:error, _} = update_form_data(form)
 
-    params      = %{"first_name" => "a", "last_name" => "a", "user_info" => %{"section" => "s"}}
-    form        = create_form(UserType, user, params)
+    params = %{"first_name" => "a", "last_name" => "a", "user_info" => %{"section" => "s"}}
+    form = create_form(UserType, user, params)
     {:ok, user} = update_form_data(form)
 
-    params      = %{"first_name" => "a", "last_name" => "a", "user_info" => %{"id" => user.user_info.id, "section" => "a"}}
-    user        = get_first_user() # download it again, we want unloaded user_info
+    params = %{
+      "first_name" => "a",
+      "last_name" => "a",
+      "user_info" => %{"id" => user.user_info.id, "section" => "a"}
+    }
 
-    form        = create_form(UserType, user, params)
+    # download it again, we want unloaded user_info
+    user = get_first_user()
+
+    form = create_form(UserType, user, params)
     {:ok, user} = update_form_data(form)
 
     assert user.user_info.section == "a"

@@ -6,7 +6,7 @@ defmodule Formex.Ecto.Changeset do
   alias Formex.FormNested
   @repo Application.get_env(:formex, :repo)
 
-  @spec create_changeset(form :: Form.t) :: Form.t
+  @spec create_changeset(form :: Form.t()) :: Form.t()
   def create_changeset(form) do
     form.struct
     |> cast(form.mapped_params, get_fields_to_cast(form))
@@ -15,7 +15,7 @@ defmodule Formex.Ecto.Changeset do
     |> form.type.modify_changeset(form)
   end
 
-  @spec create_changeset_for_validation(form :: Form.t) :: Form.t
+  @spec create_changeset_for_validation(form :: Form.t()) :: Form.t()
   def create_changeset_for_validation(form) do
     form.struct
     |> cast(form.mapped_params, get_fields_to_cast(form))
@@ -24,7 +24,7 @@ defmodule Formex.Ecto.Changeset do
 
   #
 
-  @spec get_fields_to_cast(form :: Form.t) :: List.t
+  @spec get_fields_to_cast(form :: Form.t()) :: List.t()
   defp get_fields_to_cast(form) do
     fields_casted_manually = form.type.fields_casted_manually(form)
 
@@ -32,7 +32,7 @@ defmodule Formex.Ecto.Changeset do
     |> Form.get_fields()
     |> filter_normal_fields(form)
     |> Enum.filter(fn field -> field.name not in fields_casted_manually end)
-    |> Enum.map(&(&1.struct_name))
+    |> Enum.map(& &1.struct_name)
   end
 
   # It will find only many_to_many and one_to_many associations (not many_to_one),
@@ -51,13 +51,15 @@ defmodule Formex.Ecto.Changeset do
       case form.struct_module.__schema__(:association, field.name) do
         nil ->
           changeset
+
         module ->
           ids = form.mapped_params[to_string(field.name)] || []
 
-          associated = module.related
-          |> where([c], c.id in ^ids)
-          |> @repo.all
-          |> Enum.map(&Ecto.Changeset.change/1)
+          associated =
+            module.related
+            |> where([c], c.id in ^ids)
+            |> @repo.all
+            |> Enum.map(&Ecto.Changeset.change/1)
 
           changeset
           |> put_assoc(field.name, associated)
@@ -68,51 +70,58 @@ defmodule Formex.Ecto.Changeset do
   defp cast_embedded_forms(changeset, form) do
     Form.get_subforms(form)
     |> Enum.reduce(changeset, fn item, changeset ->
-
-      cast_func = if Form.is_assoc(form, item.name) do
-        &cast_assoc/3
-      else
-        &cast_embed/3
-      end
+      cast_func =
+        if Form.is_assoc(form, item.name) do
+          &cast_assoc/3
+        else
+          &cast_embed/3
+        end
 
       case item do
         %FormNested{} ->
           changeset
-          |> cast_func.(item.name, with: fn _substruct, _params ->
-            subform = item.form
-            create_changeset(subform)
-          end)
+          |> cast_func.(
+            item.name,
+            with: fn _substruct, _params ->
+              subform = item.form
+              create_changeset(subform)
+            end
+          )
 
         %FormCollection{} ->
           changeset
-          |> cast_func.(item.name, with: fn substruct, params ->
-
-            substruct = if !substruct.id do
-              Map.put(substruct, :formex_id, params["formex_id"])
-            else
-              substruct
-            end
-
-            item
-            |> FormCollection.get_subform_by_struct(substruct)
-            |> case do
-              nil -> cast(substruct, %{}, [])
-
-              nested_form ->
-                subform = nested_form.form
-
-                changeset = create_changeset(subform)
-                |> cast(subform.mapped_params, [item.delete_field])
-
-                if get_change(changeset, item.delete_field) do
-                  %{changeset | action: :delete}
+          |> cast_func.(
+            item.name,
+            with: fn substruct, params ->
+              substruct =
+                if !substruct.id do
+                  Map.put(substruct, :formex_id, params["formex_id"])
                 else
-                  changeset
+                  substruct
                 end
+
+              item
+              |> FormCollection.get_subform_by_struct(substruct)
+              |> case do
+                nil ->
+                  cast(substruct, %{}, [])
+
+                nested_form ->
+                  subform = nested_form.form
+
+                  changeset =
+                    create_changeset(subform)
+                    |> cast(subform.mapped_params, [item.delete_field])
+
+                  if get_change(changeset, item.delete_field) do
+                    %{changeset | action: :delete}
+                  else
+                    changeset
+                  end
+              end
             end
-          end)
+          )
       end
     end)
   end
-
 end

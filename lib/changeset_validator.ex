@@ -66,52 +66,56 @@ defmodule Formex.Ecto.ChangesetValidator do
     end
   end
 
-  @spec validate(Form.t) :: Form.t
+  @spec validate(Form.t()) :: Form.t()
   def validate(form) do
     # the `create_changeset_for_validation` creates changeset without collections
     # `length` doesn't validate empty collections so we don't need them
 
     changeset = Formex.Ecto.Changeset.create_changeset_for_validation(form)
 
-    errors_fields = form
-    |> Form.get_fields_validatable
-    |> Enum.flat_map(fn item ->
-      validate_field(changeset, item)
-    end)
+    errors_fields =
+      form
+      |> Form.get_fields_validatable()
+      |> Enum.flat_map(fn item ->
+        validate_field(changeset, item)
+      end)
 
-    errors = errors_fields
-    |> Enum.reduce([], fn ({key, val}, acc) ->
-      Keyword.update(acc, key, [val], &([val|&1]))
-    end)
+    errors =
+      errors_fields
+      |> Enum.reduce([], fn {key, val}, acc ->
+        Keyword.update(acc, key, [val], &[val | &1])
+      end)
 
     form
     |> Map.put(:errors, errors)
   end
 
-  @spec validate_field(changeset :: Changeset.t, field :: Field.t) :: List.t
+  @spec validate_field(changeset :: Changeset.t(), field :: Field.t()) :: List.t()
   defp validate_field(changeset, field) do
     field.validation
-    |> Enum.reduce(changeset, fn (validation, changeset) ->
-      {name, opts} = case validation do
-        {name, opts} when is_list(opts)
-          -> {name, opts}
-        name
-          -> {name, []}
-      end
+    |> Enum.reduce(changeset, fn validation, changeset ->
+      {name, opts} =
+        case validation do
+          {name, opts} when is_list(opts) ->
+            {name, opts}
+
+          name ->
+            {name, []}
+        end
 
       {arg, opts} = Keyword.pop(opts, :arg)
 
-      args = if arg do
-        [changeset, field.name, arg, opts]
-      else
-        [changeset, field.name, opts]
-      end
+      args =
+        if arg do
+          [changeset, field.name, arg, opts]
+        else
+          [changeset, field.name, opts]
+        end
 
-      name = "validate_"<>to_string(name) |> String.to_atom
+      name = ("validate_" <> to_string(name)) |> String.to_atom()
 
       apply(Changeset, name, args)
     end)
     |> Map.get(:errors)
   end
-
 end

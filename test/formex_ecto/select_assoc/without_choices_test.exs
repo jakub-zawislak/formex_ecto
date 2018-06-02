@@ -38,8 +38,7 @@ defmodule Formex.Ecto.SelectAssoc.WithoutChoicesTest do
     {:error, form} = insert_form_data(form)
 
     assert Formex.Form.find(form, :category_id).data[:choices] == [
-      {category.name, to_string(category.id)}
-    ]
+             {category.name, to_string(category.id)}
+           ]
   end
-
 end

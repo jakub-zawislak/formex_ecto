@@ -78,7 +78,7 @@ defmodule Formex.Ecto.Controller do
   @doc """
   Works same as `Formex.Controller.handle_form/2`, but also invokes `Ecto.Repo.insert/2`
   """
-  @spec insert_form_data(Form.t) :: {:ok, Ecto.Schema.t} | {:error, Form.t}
+  @spec insert_form_data(Form.t()) :: {:ok, Ecto.Schema.t()} | {:error, Form.t()}
   def insert_form_data(form) do
     form = Builder.handle_submit(form)
 
@@ -89,7 +89,9 @@ defmodule Formex.Ecto.Controller do
       |> case do
         {:error, changeset} ->
           handle_changeset_error(form, changeset)
-        {:ok, struct} -> {:ok, struct}
+
+        {:ok, struct} ->
+          {:ok, struct}
       end
     else
       {:error, %{form | submitted?: true}}
@@ -99,7 +101,7 @@ defmodule Formex.Ecto.Controller do
   @doc """
   Works same as `Formex.Controller.handle_form/2`, but also invokes `Ecto.Repo.update/2`
   """
-  @spec update_form_data(Form.t) :: {:ok, Ecto.Schema.t} | {:error, Form.t}
+  @spec update_form_data(Form.t()) :: {:ok, Ecto.Schema.t()} | {:error, Form.t()}
   def update_form_data(form) do
     form = Builder.handle_submit(form)
 
@@ -110,7 +112,9 @@ defmodule Formex.Ecto.Controller do
       |> case do
         {:error, changeset} ->
           handle_changeset_error(form, changeset)
-        {:ok, struct} -> {:ok, struct}
+
+        {:ok, struct} ->
+          {:ok, struct}
       end
     else
       {:error, %{form | submitted?: true}}
@@ -122,5 +126,4 @@ defmodule Formex.Ecto.Controller do
 
     {:error, %{form | submitted?: true}}
   end
-
 end

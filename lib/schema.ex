@@ -15,5 +15,4 @@ defmodule Formex.Ecto.Schema do
       Ecto.Schema.field(:formex_id, :string, virtual: true)
     end
   end
-
 end

@@ -5,8 +5,11 @@ defmodule Formex.Ecto.SelectAssoc.GroupFieldTestType do
 
   def build_form(form) do
     form
-    |> add(:user_id, Formex.Ecto.CustomField.SelectAssoc, validation: [:required],
-      choice_label: fn user -> user.last_name<>" "<>user.first_name end,
+    |> add(
+      :user_id,
+      Formex.Ecto.CustomField.SelectAssoc,
+      validation: [:required],
+      choice_label: fn user -> user.last_name <> " " <> user.first_name end,
       group_by: :last_name
     )
   end
@@ -19,8 +22,11 @@ defmodule Formex.Ecto.SelectAssoc.GroupAssocTestType do
 
   def build_form(form) do
     form
-    |> add(:user_id, Formex.Ecto.CustomField.SelectAssoc, validation: [:required],
-      choice_label: fn user -> user.last_name<>" "<>user.first_name end,
+    |> add(
+      :user_id,
+      Formex.Ecto.CustomField.SelectAssoc,
+      validation: [:required],
+      choice_label: fn user -> user.last_name <> " " <> user.first_name end,
       group_by: :department
     )
   end
@@ -33,8 +39,11 @@ defmodule Formex.Ecto.SelectAssoc.GroupAssocFieldTestType do
 
   def build_form(form) do
     form
-    |> add(:user_id, Formex.Ecto.CustomField.SelectAssoc, validation: [:required],
-      choice_label: fn user -> user.last_name<>" "<>user.first_name end,
+    |> add(
+      :user_id,
+      Formex.Ecto.CustomField.SelectAssoc,
+      validation: [:required],
+      choice_label: fn user -> user.last_name <> " " <> user.first_name end,
       group_by: [:department, :id]
     )
   end
@@ -52,7 +61,7 @@ defmodule Formex.Ecto.SelectAssoc.ChoiceGroupTest do
     form = create_form(GroupFieldTestType, %Article{})
 
     choice_groups = Enum.at(form.items, 0).data[:choices]
-    choice_group  = Enum.at(choice_groups, 0)
+    choice_group = Enum.at(choice_groups, 0)
 
     {group_label, choices} = choice_group
 
@@ -67,7 +76,7 @@ defmodule Formex.Ecto.SelectAssoc.ChoiceGroupTest do
     form = create_form(GroupAssocTestType, %Article{})
 
     choice_groups = Enum.at(form.items, 0).data[:choices]
-    choice_group  = Enum.at(choice_groups, 0)
+    choice_group = Enum.at(choice_groups, 0)
 
     {group_label, choices} = choice_group
 
@@ -82,11 +91,10 @@ defmodule Formex.Ecto.SelectAssoc.ChoiceGroupTest do
     form = create_form(GroupAssocFieldTestType, %Article{})
 
     choice_groups = Enum.at(form.items, 0).data[:choices]
-    choice_group  = Enum.at(choice_groups, 0)
+    choice_group = Enum.at(choice_groups, 0)
 
     {group_label, _} = choice_group
 
     assert is_integer(group_label)
   end
-
 end

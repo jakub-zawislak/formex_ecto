@@ -25,7 +25,7 @@ defmodule Formex.BuilderTest do
   alias Formex.Ecto.TestRepo
 
   test "create a form" do
-    form = create_form(BuilderTestType, %Article{}, %{}, [some: :data])
+    form = create_form(BuilderTestType, %Article{}, %{}, some: :data)
     assert Enum.at(form.items, 0).name == :title
     assert form.opts[:some] == :data
   end
@@ -41,7 +41,6 @@ defmodule Formex.BuilderTest do
   end
 
   test "database update" do
-
     article = TestRepo.insert!(%Article{title: "asd", content: "szynka"})
 
     params = %{"content" => "cebula"}
@@ -53,7 +52,6 @@ defmodule Formex.BuilderTest do
   end
 
   test "changeset error" do
-
     article = TestRepo.insert!(%Article{title: "asd", content: "szynka"})
 
     params = %{"title" => "as", "content" => "szynka"}

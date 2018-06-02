@@ -12,16 +12,17 @@ defimpl Formex.BuilderProtocol, for: Formex.BuilderType.Ecto do
 
   @repo Application.get_env(:formex, :repo)
 
-  @spec create_form(Map.t) :: Map.t
+  @spec create_form(Map.t()) :: Map.t()
   def create_form(args) do
     form = args.form.type.build_form(args.form)
 
     method = if form.struct.id, do: :put, else: :post
 
-    form = form
-    |> Map.put(:struct, preload_assocs(form))
-    |> Map.put(:method, method)
-    |> Form.finish_creating
+    form =
+      form
+      |> Map.put(:struct, preload_assocs(form))
+      |> Map.put(:method, method)
+      |> Form.finish_creating()
 
     # form = form
     # |> Map.put(:data,   Keyword.put(form.data, :original_struct, form.struct))
@@ -30,27 +31,30 @@ defimpl Formex.BuilderProtocol, for: Formex.BuilderType.Ecto do
     Map.put(args, :form, form)
   end
 
-  @spec create_struct_info(Map.t) :: Map.t
+  @spec create_struct_info(Map.t()) :: Map.t()
   def create_struct_info(args) do
-    form   = args.form
+    form = args.form
     struct = struct(form.struct_module)
 
-    struct_info = struct
-    |> Map.from_struct
-    |> Enum.filter(&(elem(&1, 0) !== :__meta__))
-    |> Enum.map(fn {k, _v} ->
-      v = case get_assoc_or_embed(form, k) do
-        %{cardinality: :many, related: module} ->
-          {:collection, module}
+    struct_info =
+      struct
+      |> Map.from_struct()
+      |> Enum.filter(&(elem(&1, 0) !== :__meta__))
+      |> Enum.map(fn {k, _v} ->
+        v =
+          case get_assoc_or_embed(form, k) do
+            %{cardinality: :many, related: module} ->
+              {:collection, module}
 
-        %{cardinality: :one, related: module} ->
-          {:nested, module}
+            %{cardinality: :one, related: module} ->
+              {:nested, module}
 
-        _ -> :any
-      end
+            _ ->
+              :any
+          end
 
-      {k, v}
-    end)
+        {k, v}
+      end)
 
     form = Map.put(form, :struct_info, struct_info)
     Map.put(args, :form, form)
@@ -65,14 +69,13 @@ defimpl Formex.BuilderProtocol, for: Formex.BuilderType.Ecto do
     form.items
     |> Enum.filter(fn item ->
       case item do
-        %FormNested{}     -> true
+        %FormNested{} -> true
         %FormCollection{} -> true
-        %Field{}          -> item.type == :multiple_select
-        _                 -> false
+        %Field{} -> item.type == :multiple_select
+        _ -> false
       end
     end)
     |> Enum.reduce(form.struct, fn item, struct ->
-
       if is_assoc(form, item.name) do
         queryable = struct.__struct__.__schema__(:association, item.name).queryable
 
@@ -118,7 +121,7 @@ defimpl Formex.BuilderProtocol, for: Formex.BuilderType.Ecto do
   # end
 
   @doc false
-  @spec get_assoc_or_embed(form :: Form.t, name :: Atom.t) :: any
+  @spec get_assoc_or_embed(form :: Form.t(), name :: Atom.t()) :: any
   defp get_assoc_or_embed(form, name) do
     if is_assoc(form, name) do
       form.struct_module.__schema__(:association, name)
@@ -128,7 +131,7 @@ defimpl Formex.BuilderProtocol, for: Formex.BuilderType.Ecto do
   end
 
   @doc false
-  @spec is_assoc(form :: Form.t, name :: Atom.t) :: boolean
+  @spec is_assoc(form :: Form.t(), name :: Atom.t()) :: boolean
   defp is_assoc(form, name) do
     form.struct_module.__schema__(:association, name) != nil
   end
