@@ -24,7 +24,7 @@ defmodule Formex.Ecto.SelectAssoc.WithoutChoicesTest do
 
     form = create_form(SelectAssocWithoutChoicesType, %Article{})
 
-    assert Enum.count(Formex.Form.find(form, :category_id).data[:choices]) == 0
+    assert Formex.Form.find(form, :category_id).data[:choices] == []
   end
 
   test "label provider" do

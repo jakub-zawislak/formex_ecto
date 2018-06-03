@@ -4,7 +4,7 @@ defmodule Formex.Ecto.Mixfile do
   def project do
     [
       app: :formex_ecto,
-      version: "0.2.0",
+      version: "0.2.1",
       elixir: "~> 1.3",
       build_embedded: Mix.env() == :prod,
       start_permanent: Mix.env() == :prod,
@@ -29,7 +29,8 @@ defmodule Formex.Ecto.Mixfile do
       # without a :dev the jakub-zawislak/phoenix-forms won't start. maybe should be removed
       {:postgrex, ">= 0.0.0", only: [:dev, :test]},
       {:phoenix, "~> 1.3.2", only: [:dev, :test]},
-      {:phoenix_ecto, "~> 3.3", only: [:dev, :test]}
+      {:phoenix_ecto, "~> 3.3", only: [:dev, :test]},
+      {:credo, "~> 0.9", only: [:dev, :test], runtime: false}
     ]
 
     if !System.get_env("FORMEX_DEV") do

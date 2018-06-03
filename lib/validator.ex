@@ -45,7 +45,6 @@ defmodule Formex.Ecto.Validator do
     errors =
       changeset.errors
       |> Enum.reduce([], fn {key, val}, acc ->
-        IO.inspect(key)
         name = Form.get_name_by_struct_name(form, key)
 
         Keyword.update(acc, name, [val], &[val | &1])

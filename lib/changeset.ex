@@ -45,7 +45,8 @@ defmodule Formex.Ecto.Changeset do
   end
 
   defp cast_multiple_selects(changeset, form) do
-    Form.get_fields(form)
+    form
+    |> Form.get_fields()
     |> Enum.filter(&(&1.type == :multiple_select))
     |> Enum.reduce(changeset, fn field, changeset ->
       case form.struct_module.__schema__(:association, field.name) do
@@ -68,7 +69,8 @@ defmodule Formex.Ecto.Changeset do
   end
 
   defp cast_embedded_forms(changeset, form) do
-    Form.get_subforms(form)
+    form
+    |> Form.get_subforms()
     |> Enum.reduce(changeset, fn item, changeset ->
       cast_func =
         if Form.is_assoc(form, item.name) do
@@ -94,10 +96,10 @@ defmodule Formex.Ecto.Changeset do
             item.name,
             with: fn substruct, params ->
               substruct =
-                if !substruct.id do
-                  Map.put(substruct, :formex_id, params["formex_id"])
-                else
+                if substruct.id do
                   substruct
+                else
+                  Map.put(substruct, :formex_id, params["formex_id"])
                 end
 
               item
@@ -110,7 +112,8 @@ defmodule Formex.Ecto.Changeset do
                   subform = nested_form.form
 
                   changeset =
-                    create_changeset(subform)
+                    subform
+                    |> create_changeset()
                     |> cast(subform.mapped_params, [item.delete_field])
 
                   if get_change(changeset, item.delete_field) do

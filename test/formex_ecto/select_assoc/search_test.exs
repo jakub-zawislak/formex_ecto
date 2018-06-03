@@ -65,8 +65,8 @@ defmodule Formex.Ecto.SelectAssoc.SearchTest do
     choices = SelectAssoc.search(form, :category_id, "ix")
 
     assert Enum.count(choices) == 2
-    assert Enum.at(choices, 0) |> elem(0) == "Elixir"
-    assert Enum.at(choices, 1) |> elem(0) == "Phoenix"
+    assert choices |> Enum.at(0) |> elem(0) == "Elixir"
+    assert choices |> Enum.at(1) |> elem(0) == "Phoenix"
   end
 
   test "basic multiple" do
@@ -77,7 +77,7 @@ defmodule Formex.Ecto.SelectAssoc.SearchTest do
     choices = SelectAssoc.search(form, :tags, "2")
 
     assert Enum.count(choices) == 1
-    assert Enum.at(choices, 0) |> elem(0) == "tag2"
+    assert choices |> Enum.at(0) |> elem(0) == "tag2"
   end
 
   test "search field" do
@@ -88,7 +88,7 @@ defmodule Formex.Ecto.SelectAssoc.SearchTest do
     choices = SelectAssoc.search(form, :user_id, "Ja")
 
     assert Enum.count(choices) == 1
-    assert Enum.at(choices, 0) |> elem(0) == "JanCebula"
+    assert choices |> Enum.at(0) |> elem(0) == "JanCebula"
   end
 
   test "search query" do
@@ -99,7 +99,7 @@ defmodule Formex.Ecto.SelectAssoc.SearchTest do
     choices = SelectAssoc.search(form, :user_id, "Ceb")
 
     assert Enum.count(choices) == 2
-    assert Enum.at(choices, 0) |> elem(0) == "Jan"
-    assert Enum.at(choices, 1) |> elem(0) == "Przemek"
+    assert choices |> Enum.at(0) |> elem(0) == "Jan"
+    assert choices |> Enum.at(1) |> elem(0) == "Przemek"
   end
 end

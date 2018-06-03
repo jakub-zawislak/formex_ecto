@@ -136,7 +136,9 @@ defmodule Formex.Ecto.CustomField.SelectAssoc do
   @spec search(form :: Form.t(), name :: atom, search :: String.t()) :: List.t()
   def search(form, name, search) do
     name_id =
-      Regex.replace(~r/_id$/, Atom.to_string(name), "")
+      name
+      |> Atom.to_string
+      |> (&Regex.replace(~r/_id$/, &1, "")).()
       |> String.to_atom()
 
     search = "%" <> search <> "%"
@@ -180,7 +182,9 @@ defmodule Formex.Ecto.CustomField.SelectAssoc do
 
   defp create_field_single(form, name_id, opts) do
     name =
-      Regex.replace(~r/_id$/, Atom.to_string(name_id), "")
+      name_id
+      |> Atom.to_string
+      |> (&Regex.replace(~r/_id$/, &1, "")).()
       |> String.to_atom()
 
     module = form.struct_module.__schema__(:association, name).related
@@ -219,20 +223,12 @@ defmodule Formex.Ecto.CustomField.SelectAssoc do
   end
 
   defp put_choices(opts, module) do
-    if !opts[:without_choices] do
-      choices =
-        module
-        |> apply_query(opts[:query])
-        |> apply_group_by_assoc(opts[:group_by])
-        |> @repo.all
-        |> group_rows(opts[:group_by])
-        |> generate_choices(opts[:choice_label])
-
-      Keyword.put(opts, :choices, choices)
-    else
+    if opts[:without_choices] do
       Keyword.put(opts, :choice_label_provider, fn id ->
+        query = from(e in module, where: e.id == ^id)
+
         row =
-          from(e in module, where: e.id == ^id)
+          query
           |> apply_query(opts[:query])
           |> apply_group_by_assoc(opts[:group_by])
           |> @repo.one
@@ -243,6 +239,16 @@ defmodule Formex.Ecto.CustomField.SelectAssoc do
           nil
         end
       end)
+    else
+      choices =
+        module
+        |> apply_query(opts[:query])
+        |> apply_group_by_assoc(opts[:group_by])
+        |> @repo.all
+        |> group_rows(opts[:group_by])
+        |> generate_choices(opts[:choice_label])
+
+      Keyword.put(opts, :choices, choices)
     end
   end
 
@@ -254,9 +260,10 @@ defmodule Formex.Ecto.CustomField.SelectAssoc do
           property_path
 
         is_atom(property_path) ->
-          cond do
-            module.__schema__(:association, property_path) -> [property_path, :name]
-            true -> [property_path]
+          if module.__schema__(:association, property_path) do
+            [property_path, :name]
+          else
+            [property_path]
           end
 
         true ->

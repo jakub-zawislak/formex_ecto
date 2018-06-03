@@ -7,7 +7,6 @@ config :formex,
   validator: Formex.Validator.Simple,
   translate_error: &Formex.Ecto.TestErrorHelpers.translate_error/1
 
-config :logger, :console,
-  level: :info
+config :logger, :console, level: :info
 
 import_config "test.secret.exs"

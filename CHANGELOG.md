@@ -1,3 +1,6 @@
+## v0.2.1 (2018-06-03)
+* Removed IO.inspect
+
 ## v0.2.0 (2018-06-02)
 * Return of Changeset validation that was in formex < 0.5. Read more in UPGRADE.md
 * Renamed callback `changeset_after_create_callback` to `modify_changeset`

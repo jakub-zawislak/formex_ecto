@@ -57,6 +57,6 @@ defmodule Formex.BuilderTest do
     params = %{"title" => "as", "content" => "szynka"}
     form = create_form(BuilderTestType, article, params)
 
-    {:error, form} = update_form_data(form)
+    {:error, _form} = update_form_data(form)
   end
 end
