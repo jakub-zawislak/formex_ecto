@@ -5,6 +5,8 @@ defmodule Formex.Ecto.Validator do
 
   @moduledoc false
 
+  def assign_changeset_errors(form, nil), do: form
+
   def assign_changeset_errors(form, changeset) do
     form_items =
       Enum.map(form.items, fn item ->
