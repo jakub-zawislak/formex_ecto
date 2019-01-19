@@ -81,50 +81,58 @@ defmodule Formex.Ecto.Changeset do
 
       case item do
         %FormNested{} ->
-          changeset
-          |> cast_func.(
-            item.name,
-            with: fn _substruct, _params ->
-              subform = item.form
-              create_changeset(subform)
-            end
-          )
+          cast_embedded_forms_nested(changeset, item, cast_func)
 
         %FormCollection{} ->
-          changeset
-          |> cast_func.(
-            item.name,
-            with: fn substruct, params ->
-              substruct =
-                if substruct.id do
-                  substruct
-                else
-                  Map.put(substruct, :formex_id, params["formex_id"])
-                end
-
-              item
-              |> FormCollection.get_subform_by_struct(substruct)
-              |> case do
-                nil ->
-                  cast(substruct, %{}, [])
-
-                nested_form ->
-                  subform = nested_form.form
-
-                  changeset =
-                    subform
-                    |> create_changeset()
-                    |> cast(subform.mapped_params, [item.delete_field])
-
-                  if get_change(changeset, item.delete_field) do
-                    %{changeset | action: :delete}
-                  else
-                    changeset
-                  end
-              end
-            end
-          )
+          cast_embedded_forms_collection(changeset, item, cast_func)
       end
     end)
+  end
+
+  defp cast_embedded_forms_nested(changeset, item, cast_func) do
+    changeset
+    |> cast_func.(
+      item.name,
+      with: fn _substruct, _params ->
+        subform = item.form
+        create_changeset(subform)
+      end
+    )
+  end
+
+  defp cast_embedded_forms_collection(changeset, item, cast_func) do
+    changeset
+    |> cast_func.(
+      item.name,
+      with: fn substruct, params ->
+        substruct =
+          if substruct.id do
+            substruct
+          else
+            Map.put(substruct, :formex_id, params["formex_id"])
+          end
+
+        item
+        |> FormCollection.get_subform_by_struct(substruct)
+        |> case do
+          nil ->
+            cast(substruct, %{}, [])
+
+          nested_form ->
+            subform = nested_form.form
+
+            changeset =
+              subform
+              |> create_changeset()
+              |> cast(subform.mapped_params, [item.delete_field])
+
+            if get_change(changeset, item.delete_field) do
+              %{changeset | action: :delete}
+            else
+              changeset
+            end
+        end
+      end
+    )
   end
 end
