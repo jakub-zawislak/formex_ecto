@@ -17,6 +17,8 @@ defmodule Formex.Ecto.TestModel.Article do
       on_replace: :delete
     )
 
+    has_many :comments, {"article_comments", Formex.Ecto.TestModel.Comment}, foreign_key: :assoc_id
+
     timestamps()
   end
 end

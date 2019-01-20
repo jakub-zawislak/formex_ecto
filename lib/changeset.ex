@@ -4,15 +4,12 @@ defmodule Formex.Ecto.Changeset do
   alias Formex.Form
   alias Formex.FormCollection
   alias Formex.FormNested
+  import Formex.Ecto.Utils
   @repo Application.get_env(:formex, :repo)
 
   @spec create_changeset(form :: Form.t()) :: Form.t()
   def create_changeset(form) do
-    form.struct
-    |> cast(form.mapped_params, get_fields_to_cast(form))
-    |> cast_multiple_selects(form)
-    |> cast_embedded_forms(form)
-    |> form.type.modify_changeset(form)
+    do_create_changeset(form, form.struct)
   end
 
   @spec create_changeset_for_validation(form :: Form.t()) :: Form.t()
@@ -20,6 +17,28 @@ defmodule Formex.Ecto.Changeset do
     form.struct
     |> cast(form.mapped_params, get_fields_to_cast(form))
     |> cast_multiple_selects(form)
+  end
+
+  @spec create_embedded_changeset(form :: Form.t(), parent_struct :: Form.t(), name :: Atom.t()) :: Form.t()
+  defp create_embedded_changeset(form, parent_form, name) do
+
+    # in case of polymorphic association table, the new struct must by created by build_assoc
+    struct = if !form.struct.id and is_assoc(parent_form, name) do
+      Ecto.build_assoc(parent_form.struct, name)
+    else
+      form.struct
+    end
+
+    do_create_changeset(form, struct)
+  end
+
+  @spec do_create_changeset(form :: Form.t(), struct) :: Form.t()
+  defp do_create_changeset(form, struct) do
+    struct
+    |> cast(form.mapped_params, get_fields_to_cast(form))
+    |> cast_multiple_selects(form)
+    |> cast_embedded_forms(form)
+    |> form.type.modify_changeset(form)
   end
 
   #
@@ -81,34 +100,33 @@ defmodule Formex.Ecto.Changeset do
 
       case item do
         %FormNested{} ->
-          cast_embedded_forms_nested(changeset, item, cast_func)
+          cast_embedded_forms_nested(changeset, form, item, cast_func)
 
         %FormCollection{} ->
-          cast_embedded_forms_collection(changeset, item, cast_func)
+          cast_embedded_forms_collection(changeset, form, item, cast_func)
       end
     end)
   end
 
-  defp cast_embedded_forms_nested(changeset, item, cast_func) do
+  defp cast_embedded_forms_nested(changeset, form, item, cast_func) do
     changeset
     |> cast_func.(
       item.name,
       with: fn _substruct, _params ->
-        subform = item.form
-        create_changeset(subform)
+        create_embedded_changeset(item.form, form, item.name)
       end
     )
   end
 
-  defp cast_embedded_forms_collection(changeset, item, cast_func) do
+  defp cast_embedded_forms_collection(changeset, form, item, cast_func) do
     changeset
     |> cast_func.(
       item.name,
       with: fn substruct, params ->
         substruct =
-          if substruct.id do
+          if substruct.id do # existing item
             substruct
-          else
+          else # new item
             Map.put(substruct, :formex_id, params["formex_id"])
           end
 
@@ -123,7 +141,7 @@ defmodule Formex.Ecto.Changeset do
 
             changeset =
               subform
-              |> create_changeset()
+              |> create_embedded_changeset(form, item.struct_name)
               |> cast(subform.mapped_params, [item.delete_field])
 
             if get_change(changeset, item.delete_field) do

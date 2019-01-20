@@ -14,8 +14,8 @@ defmodule Formex.Ecto.Embedded.Nested.UserType do
 
   def build_form(form) do
     form
-    |> add(:first_name, :text_input, label: "Imię", validation: [:required])
-    |> add(:last_name, :text_input, label: "Nazwisko", validation: [:required])
+    |> add(:first_name, :text_input, validation: [:required])
+    |> add(:last_name, :text_input, validation: [:required])
     |> add(:user_info, Formex.Ecto.Nested.OneToOne.UserInfoType)
   end
 end
