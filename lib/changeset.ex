@@ -1,11 +1,12 @@
 defmodule Formex.Ecto.Changeset do
   import Ecto.Changeset
   import Ecto.Query
+  import Formex.Ecto.Utils
+
+  alias Formex.Config
   alias Formex.Form
   alias Formex.FormCollection
   alias Formex.FormNested
-  import Formex.Ecto.Utils
-  @repo Application.get_env(:formex, :repo)
 
   @spec create_changeset(form :: Form.t()) :: Form.t()
   def create_changeset(form) do
@@ -78,7 +79,7 @@ defmodule Formex.Ecto.Changeset do
           associated =
             module.related
             |> where([c], c.id in ^ids)
-            |> @repo.all
+            |> Config.repo().all
             |> Enum.map(&Ecto.Changeset.change/1)
 
           changeset

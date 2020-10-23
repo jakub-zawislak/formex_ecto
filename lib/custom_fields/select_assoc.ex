@@ -1,10 +1,10 @@
 defmodule Formex.Ecto.CustomField.SelectAssoc do
   @behaviour Formex.CustomField
   import Ecto.Query
+
+  alias Formex.Config
   alias Formex.Field
   alias Formex.Form
-
-  @repo Application.get_env(:formex, :repo)
 
   @moduledoc """
   This module generates a `:select` field with options downloaded from Repo.
@@ -175,7 +175,7 @@ defmodule Formex.Ecto.CustomField.SelectAssoc do
 
     query
     |> apply_query(opts[:query])
-    |> @repo.all
+    |> Config.repo().all
     |> group_rows(opts[:group_by])
     |> generate_choices(opts[:choice_label])
   end
@@ -208,7 +208,7 @@ defmodule Formex.Ecto.CustomField.SelectAssoc do
     selected =
       if form.struct.id do
         form.struct
-        |> @repo.preload(name)
+        |> Config.repo().preload(name)
         |> Map.get(name)
         |> Enum.map(& &1.id)
       else
@@ -231,7 +231,7 @@ defmodule Formex.Ecto.CustomField.SelectAssoc do
           query
           |> apply_query(opts[:query])
           |> apply_group_by_assoc(opts[:group_by])
-          |> @repo.one
+          |> Config.repo().one
 
         if row do
           get_choice_label_val(row, opts[:choice_label])
@@ -244,7 +244,7 @@ defmodule Formex.Ecto.CustomField.SelectAssoc do
         module
         |> apply_query(opts[:query])
         |> apply_group_by_assoc(opts[:group_by])
-        |> @repo.all
+        |> Config.repo().all
         |> group_rows(opts[:group_by])
         |> generate_choices(opts[:choice_label])
 

@@ -4,14 +4,15 @@ defmodule Formex.BuilderType.Ecto do
 end
 
 defimpl Formex.BuilderProtocol, for: Formex.BuilderType.Ecto do
+  alias Formex.Config
   alias Formex.Form
   alias Formex.Field
   alias Formex.FormNested
   alias Formex.FormCollection
-  import Formex.Ecto.Utils
-  require Ecto.Query
 
-  @repo Application.get_env(:formex, :repo)
+  import Formex.Ecto.Utils
+
+  require Ecto.Query
 
   @spec create_form(Map.t()) :: Map.t()
   def create_form(args) do
@@ -81,7 +82,7 @@ defimpl Formex.BuilderProtocol, for: Formex.BuilderType.Ecto do
         queryable = struct.__struct__.__schema__(:association, item.name).queryable
 
         struct
-        |> @repo.preload([
+        |> Config.repo().preload([
           {item.name, Ecto.Query.from(e in queryable, order_by: e.id)}
         ])
       else
