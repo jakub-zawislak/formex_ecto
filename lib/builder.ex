@@ -8,6 +8,7 @@ defimpl Formex.BuilderProtocol, for: Formex.BuilderType.Ecto do
   alias Formex.Field
   alias Formex.FormNested
   alias Formex.FormCollection
+  import Formex.Ecto.Utils
   require Ecto.Query
 
   @repo Application.get_env(:formex, :repo)
@@ -130,9 +131,4 @@ defimpl Formex.BuilderProtocol, for: Formex.BuilderType.Ecto do
     end
   end
 
-  @doc false
-  @spec is_assoc(form :: Form.t(), name :: Atom.t()) :: boolean
-  defp is_assoc(form, name) do
-    form.struct_module.__schema__(:association, name) != nil
-  end
 end

@@ -14,8 +14,8 @@ defmodule Formex.Ecto.Collection.EmbedsMany.UserType do
 
   def build_form(form) do
     form
-    |> add(:first_name, :text_input, label: "Imię", validation: [:required])
-    |> add(:last_name, :text_input, label: "Nazwisko", validation: [:required])
+    |> add(:first_name, :text_input, label: "Name", validation: [:required])
+    |> add(:last_name, :text_input, label: "Surname", validation: [:required])
     |> add(:schools, Formex.Ecto.Collection.EmbedsMany.UserSchoolType)
   end
 end
@@ -38,7 +38,7 @@ defmodule Formex.Ecto.Collection.EmbedsManyTest do
 
     form_str = form_html |> to_string
 
-    assert String.match?(form_str, ~r/Imię/)
+    assert String.match?(form_str, ~r/Surname/)
     assert String.match?(form_str, ~r/School name/)
   end
 

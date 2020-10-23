@@ -9,6 +9,7 @@ defmodule Formex.Ecto.TestModel.User do
 
     belongs_to(:department, Formex.Ecto.TestModel.Department)
     belongs_to(:user_info, Formex.Ecto.TestModel.UserInfo)
+    has_one(:avatar, {"user_avatars", Formex.Ecto.TestModel.Avatar}, foreign_key: :assoc_id)
     has_many(:user_addresses, Formex.Ecto.TestModel.UserAddress)
     has_many(:user_accounts, Formex.Ecto.TestModel.UserAccount)
 
