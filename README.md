@@ -9,7 +9,7 @@ from Ecto.Changeset.
 
 ```elixir
 def deps do
-  [{:formex_ecto, "~> 0.2.0"}]
+  [{:formex_ecto, "~> 0.2.3"}]
 end
 ```
 

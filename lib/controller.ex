@@ -1,9 +1,10 @@
 defmodule Formex.Ecto.Controller do
+  alias Formex.Config
   alias Formex.Form
   alias Formex.Builder
+
   import Formex.Ecto.Validator
   import Formex.Ecto.Changeset
-  @repo Application.get_env(:formex, :repo)
 
   defmacro __using__(_) do
     quote do
@@ -85,7 +86,7 @@ defmodule Formex.Ecto.Controller do
     if form.valid? do
       form
       |> create_changeset
-      |> @repo.insert
+      |> Config.repo().insert
       |> case do
         {:error, changeset} ->
           handle_changeset_error(form, changeset)
@@ -108,7 +109,7 @@ defmodule Formex.Ecto.Controller do
     if form.valid? do
       form
       |> create_changeset
-      |> @repo.update
+      |> Config.repo().update
       |> case do
         {:error, changeset} ->
           handle_changeset_error(form, changeset)
