@@ -30,9 +30,9 @@ defmodule Formex.Ecto.Mixfile do
       {:ecto_sql, "~> 3.0", only: [:dev, :test]},
       {:postgrex, ">= 0.0.0", only: [:dev, :test]},
       {:jason, "~> 1.1", only: [:dev, :test]},
-      {:phoenix, "~> 1.3.2", only: [:dev, :test]},
+      {:phoenix, "~> 1.3", only: [:dev, :test]},
       {:phoenix_ecto, "~> 4.0", only: [:dev, :test]},
-      {:credo, "~> 0.9", only: [:dev, :test], runtime: false}
+      {:credo, "~> 1.0", only: [:dev, :test], runtime: false}
     ]
 
     if !System.get_env("FORMEX_DEV") do
